@@ -1,18 +1,18 @@
-package day01;//å£°æ˜åŒ…day01
+package day01;//ÉùÃ÷°üday01
 
-public class HelloWorld {//å£°æ˜ç±»HelloWorld
-    //ä¸»æ–¹æ³•ï¼Œä¸ºç¨‹åºçš„å…¥å£
-	//ç¨‹åºçš„æ‰§è¡Œä»mainå¼€å§‹ï¼Œmainç»“æŸåˆ™ç¨‹åºç»“æŸ
+public class HelloWorld {//ÉùÃ÷ÀàHelloWorld
+    //Ö÷·½·¨£¬Îª³ÌĞòµÄÈë¿Ú
+	//³ÌĞòµÄÖ´ĞĞ´Ómain¿ªÊ¼£¬main½áÊøÔò³ÌĞò½áÊø
 	public static void main(String[] args) {
-		   //è¾“å‡ºHelloWorld
-		   //1.ä¸¥æ ¼åŒºåˆ†å¤§å°å†™
-		   //2.ç¬¦å·å¿…é¡»æ˜¯è‹±æ–‡æ¨¡å¼çš„
-		   //3.æ¯å¥è¯çš„ç»“æŸè¦ç”¨;ç»“å°¾
-		   //4.println():è¾“å‡ºå¹¶æ¢è¡Œ
-		   //     print():è¾“å‡ºä¸æ¢è¡Œ
+		   //Êä³öHelloWorld
+		   //1.ÑÏ¸ñÇø·Ö´óĞ¡Ğ´
+		   //2.·ûºÅ±ØĞëÊÇÓ¢ÎÄÄ£Ê½µÄ
+		   //3.Ã¿¾ä»°µÄ½áÊøÒªÓÃ;½áÎ²
+		   //4.println():Êä³ö²¢»»ĞĞ
+		   //     print():Êä³ö²»»»ĞĞ
            System.out.print("Hello");
            System.out.println("World");
-           System.out.println("ä»Šå¤©å¤©æ°”ä¸é”™ï¼Œå¿ƒæƒ…ä¹Ÿä¸é”™");
+           System.out.println("½ñÌìÌìÆø²»´í£¬ĞÄÇéÒ²²»´í");
 
 	}
 
