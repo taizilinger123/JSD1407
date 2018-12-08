@@ -1,9 +1,9 @@
-package day01;//包名
+package day01;//鍖呭悕
 
-public class HelloWorld1 {//类名
-  //main方法，程序的入口
+public class HelloWorld1 {//绫诲悕
+  //main鏂规硶锛岀▼搴忕殑鍏ュ彛
   public static void main(String[] args) {
-	//输出语句
+	//杈撳嚭璇彞
 	System.out.println("HelloWorld");
 	System.out.println("HelloEveryone");
 	
