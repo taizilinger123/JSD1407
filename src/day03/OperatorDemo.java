@@ -35,9 +35,6 @@ public class OperatorDemo {
 	++n;  //自增，相当于n=n+1
 	System.out.println(n);//6
     */
-	  
-
-	
 	
   }
 }
