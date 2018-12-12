@@ -38,7 +38,7 @@ public class IfDemo {
 		
 		/*
 		int num = 3;
-		switch(num){ //整型
+		switch(num){ //只能为整型，double型报错
 		case 1: //判断num==1
 			System.out.println("111");
 			break;
