@@ -47,6 +47,8 @@ age<=50
 import java.util.Scanner;  //1
 Scanner scan = new Scanner(System.in);  //2
 
+
+
 int age=scan.nextInt();  //3
 boolean b1 = age>=18 && age<=50;
 System.out.println(b1);  //true
@@ -58,9 +60,78 @@ System.out.println(b1);  //true
 2.能被400整除
 
 year%4==0
-   &&
+   &&		
 year%100!=0
    ||
 year%400==0
-
 year%4==0 && year%100!=0 || year%400==0
+
+早上来上班:
+起得特别早-----走着来
+起得正常-------坐公交来
+起得稍晚-------坐地铁来
+再晚-----------开车来
+更晚-----------不来
+
+if...else if
+
+int score=82;
+if(score>=90){
+   A优秀
+}else if(score>=80){
+   B良好
+}else if(score>=60){
+   C中等
+}else{
+   D差
+}
+
+总结:
+1.运算符
+    算术
+    关系
+    逻辑
+    赋值:建议使用扩展赋值
+         a+=5; 相当于a=a+5
+    +
+    三目: 语法: boolean ? 1 : 2
+          运算过程:
+	    计算boolean
+	    为true，则整个为1
+	    为false，则整个为2
+2.分支结构
+    if:1条路
+    if...else:2条路
+    if...else if:多条路
+    switch...case:多条路
+                  常常和break配合使用
+		  break:跳出switch
+		  优点:清晰、效率高
+		  缺点:整形、只能判断相等
+		       ---灵活性稍差
+		       
+三目/条件
+int a=5,b=6;
+int max;
+if(a>b){
+  max = a;
+  ...
+  ...
+  ...
+}else{
+  max = b;
+}
+
+if(score>=90){
+   A优秀
+}else{
+   if(score>=80 && score<90){
+      B良好
+   }else{
+      if(score>=60 && score<80){
+         C中等
+      }else{
+         D差
+      }
+   }
+}
