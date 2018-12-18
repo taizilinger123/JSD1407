@@ -1,12 +1,12 @@
 package day04;
 //while演示
 public class WhileDemo {
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		/*
-		int num=1;
-		while(num<10){
+		int num=1; //1.循环变量初始化
+		while(num<10){//2.循环条件
 			System.out.println(num+"*9="+num*9);
-			num++;
+			num++; //3.循环变量的改变
 		}
 		System.out.println("over");
 		*/
