@@ -25,7 +25,8 @@ public class MethodDemo {
 		//int c = a+b;
 		//return c;
 		
-		return a+b;
+		return a+b;//作用：返回一个值 
+//		return;//错误，尚未返回结果
 	}
 	
 	public static int sum(){//不是void必须写返回值return,下面的方法是int,main里面调用方法名的返回值也要写int,一一对应.
@@ -36,7 +37,12 @@ public class MethodDemo {
 	public static void sayHello(String name,int age){
 	}
 	public static void sayHi(String name){
+		int num = 5;
+		if(num>2){
+			return;//正确，结束方法,返回给调用方
+		}
 		System.out.println("大家好，我叫" + name);
+		
 	}
 	//无返回值无参
 	public static void say(){
