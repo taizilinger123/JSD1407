@@ -1,0 +1,350 @@
+回顾:
+1.嵌套循环
+2.数组
+    定义
+    初始化
+    访问
+    复制
+    排序
+
+
+正课:
+1.方法
+2.猜字符游戏----------
+
+
+int min = arr[0];
+for(int i=1;i<arr.length;i++){
+   if(arr[i]<min){
+      min = arr[i];
+   }
+}
+arr = Arrays.copyOf(arr,arr.length+1); 
+
+
+0  1  2--------arr
+11,22,0
+
+for(int i=arr.length-1;i>=0;i--){
+   arr[i] = arr[i-1];
+}
+i=2 arr[2]=arr[1]; arr[2]=22
+i=1 arr[1]=arr[0]; arr[1]=11
+i=0 arr[0]=arr[-1]
+
+
+for(int i=0;i<arr.length;i++){
+   arr[i+1]=arr[i];
+}
+i=0  arr[1]=arr[0]---arr[1]=11
+i=1  arr[2]=arr[1]---arr[2]=11
+
+
+
+System.arraycopy(arr,0,arr1,1,arr.length);
+
+补充题:---可做可不做
+1.将最小值放在第1个位置---自己写算法
+2.删除数组中的第3个元素
+  int[] arr = {2,6,8,4,5,7};
+  最后数组元素: 2,6,4,5,7
+  提示:1)将要删除的元素放在最后一个位置
+       2)缩容
+
+8:
+  8 % 2/3/4/5/6/7
+  只要有一个为0，说明不是质数
+5:
+  5 % 2/3/4
+  所有都不为0，说明是质数
+
+99:
+  99 % 2/3/4/5/6/7/.../97/98
+  99 % 2/3/4/5/6/7/.../49
+       51/52/53
+
+
+25 % 2/3/4/5
+     6/7/8/9/10/11/12
+
+
+4平方根2
+9平方根3
+16平方根4
+25平方根5
+36平方根6
+
+
+//调用方法----调java定义好的
+
+
+
+方法没有返回值
+System.out.println("HelloWorld");
+System.out.println();
+System.arraycopy(a,0,a1,1,4);
+Arrays.sort(a);
+
+方法有返回值
+int num = scan.nextInt();
+int num = rand.nextInt(100);
+int[] arr = Arrays.copyOf(a,a.length+1);
+double dou = Math.random();
+double d = Math.sqrt(25);
+
+
+
+方法没有返回值
+
+方法无参数
+System.out.println();
+int num = scan.nextInt();
+double dou = Math.random(); 固定在[0,1)
+
+方法有参数
+System.out.println("HelloWorld");
+System.arraycopy(a,0,a1,1,4);
+Arrays.sort(a);
+int num = rand.nextInt(100); 0-99
+int num = rand.nextInt(50);  0-49
+int num = rand.nextInt(20); 
+int num = rand.nextInt(15);
+int num = rand.nextInt(25);  0-24
+
+
+int[] arr = Arrays.copyOf(a,a.length+1);
+
+double d = Math.sqrt(25);
+
+
+方法是用于封装一段特定的逻辑功能
+方法尽可能独立---只干一件事
+
+
+sort(int[]){  //排序方法
+  //冒泡6行代码 >改为<
+}
+
+sort(a);
+sort(b);
+sort(c);
+
+arr------6行
+arr1-----6行
+arr2
+arr3
+arr4-----6行
+
+
+取钱(){
+}
+存钱(){
+}
+改密(){
+}
+
+A用户: 存钱();
+B用户: 存钱(); 改密();
+
+
+操作(){
+  //存钱
+  //取钱
+  //改密
+}
+
+A用户: 只想存钱
+
+
+A用户: 存钱(); 改密();
+
+
+开关:
+
+int n = 9;
+boolean flag = true;  //假设是质数
+for(int i=2;i<n;i++){
+  if(n % i == 0){
+     System.out.println(不是质数);
+     flag = false;   //不是质数
+     break;
+  }
+}
+若有一个取余为0，就不是质数
+所有取余都不为0，就是质数
+只要进到if，就不是质数
+if(flag == true){
+   System.out.println("是质数");
+}
+
+
+main(){
+   say();     
+   sayHi("wkj");
+   double d = sum();
+   int n = plus(5,6);
+}无参无返回值，有参无返回值，
+ 无参有返回值，有参有返回值
+public static void say() { }
+public static void sayHi(String name){ }
+public static double sum(){
+   ....业务操作
+   return 55.5;
+}
+public static int plus(int a,int b){
+   return a+b;
+}
+
+
+修饰词 返回值类型 方法名(参数列表){
+   方法体
+}
+
+当方法需要返回结果时，设计特定返回值类型
+不需要结果时，返回值类型为void
+
+
+返回结果通过return关键字
+
+
+方法嵌套调用:
+111,333,555,aaa,666,444,222
+main(){
+  111
+  a();
+  222
+}
+a(){
+  333
+  b();
+  444
+}
+b(){
+  555
+  System.out.println("aaaaaa");
+  666
+}
+
+
+
+一.设计数据结构-----数据、变量、类型
+1.int score;    //分数
+  int count;    //猜错的次数
+2.char[] chs;   //5个随机字符组成的数组
+3.char[] input; //用户猜的数的数组
+4.int[] result; //猜测结果
+
+二.设计程序结构-----方法
+1.随机生成5个字符数组
+  public static char[] generate(){
+     char[] chs = new char[5];
+     return chs;
+  }
+2.实现用户输入的与随机生成的数据间的比较
+  public static int[] check(char[] chs,char[] input){
+     int[] result = new int[2];
+     return result;
+  }
+3.main()
+
+三.设计实现---------方法的实现
+
+
+A---负责一块
+B---负责一块
+
+A告诉B，给我一个方法，???再???得到???
+  B:
+  public static int[] check(char[] chs,char[] input){
+     int[] result = new int[2];
+     return result;
+  }
+  A:不用等B全部代码写完
+
+  该怎么写代码怎么代码
+
+chs:    ABCDE
+input:  BDCMN
+
+//result[0]字符对,result[1]位置对
+int[] result = new int[2];
+for(int i=0;i<chs.length;i++){
+   for(int j=0;j<input.length;j++){
+      if(chs[i]==input[j]){
+         result[0]++;
+	 if(i==j){
+	    result[1]++;
+	 }
+	 break;
+      }
+   }
+}
+
+
+char[] letters = {'A','B','C','D','E','F''G','H','I''J','K','L''M','N','O''P','Q','R''S','T','U','V','W','X','Y','Z'};
+boolean[] flags = new boolean[letters.length];
+for(int i=0;i<chs.length;i++){
+   int index;
+   do{
+      index = rand.nextInt(26); //0到25
+   }while(flags[index]==true);
+   chs[i] = letters[index];
+   flags[index] = true;
+}
+i=0
+  index=0  chs[0]='A'  flags[0]=true
+i=1
+  index=2  chs[1]='C'  flags[2]=true
+i=2
+  index=3  chs[2]='D'  flags[3]=true
+
+
+
+
+开关默认为false
+生成过改为true
+何时存:当为false时
+    当对应开关为true时，重新生成随机数
+
+
+String字符串---------
+0.int count=0;
+1.生成随机数组----chs
+while(true){-------------自造死循环
+  2.用户猜------input
+  int[] result = 调check()比较
+  if(result[1]==chs.length){
+     猜对了
+     int score = chs.length*100-count*10;
+     输出score
+     break;
+  }else{
+     猜错了，字符对result[0],位置对result[1]
+     count++;
+  }
+}
+
+
+char:1个字符
+  'A'
+  'B'
+  'C'
+String:1串字符
+  "ABC"
+
+
+A-----B
+ -----D
+ -----C
+ -----M
+ -----N
+B-----B
+ -----D
+ -----C
+ -----M
+ -----N
+C-----B
+ -----D
+ -----C
+ -----M
+ -----N
