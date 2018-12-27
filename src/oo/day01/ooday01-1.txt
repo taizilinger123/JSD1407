@@ -227,12 +227,6 @@ class Cell{      //格子类
 
 }
 
-
-
-
-
-
-
 class Cell{
    drop();
    moveLeft();
@@ -252,32 +246,9 @@ class Cell{
 4.创建Cell类对象+打墙+打格
 
 
-
-
-
-
-
-
-
 房子-----------对象
 房子钥匙-------引用
 配了/复制一把钥匙给他
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 new Student(); //创建学生类对象
 new Teacher(); //创建老师类对象
@@ -299,8 +270,6 @@ zs.name = "zhangsan";
 
 int num = 5;
 int n = num;
-
-
 
 Cell c = new Cell();
 c.row = 5;
@@ -335,20 +304,6 @@ public static void print(Cell cc){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 i=1
   j=1/2/3/.../11
 i=2
@@ -356,21 +311,6 @@ i=2
 
 - - - - - - - - - - 
 - - - - - - - - - - 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //练习:
 1.创建Student类，包含:
@@ -385,11 +325,6 @@ i=2
 
 Student zs = new Student(); //创建对象
 
-
-
-
-
-
 英雄机:
   特征:
     width，height，x，y，image
@@ -403,13 +338,6 @@ Student zs = new Student(); //创建对象
     move()
 
 
-
-
-
-
-
-
-
 类         对象
 月饼模子   月饼
 图纸       高楼
@@ -420,15 +348,6 @@ class Student{  //学生类
 Student zs = new Student();
 Student ls = new Student();
 Student ww = new Student();
-
-
-
-
-
-
-
-
-
 
 
 学员管理系统:

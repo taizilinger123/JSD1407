@@ -1,0 +1,35 @@
+回顾：
+1.什么是类？什么是对象？
+        类中可以包含：成员变量(属性)和方法(行为)
+        类是对象的模板，对象是类的具体的实例
+2.如何创建类？如何创建对象？
+3.引用类型之间画等号
+4.null和NullPointerException
+
+
+Cell  c = new Cell();
+c.row = 2
+c.col = 5;
+
+class  Cell{
+   int row;
+   int col;
+   void  drop(){
+      row++;
+   }
+   void  moveLeft(int n){
+      col-=n;
+   }
+   String getCellInfo(){
+     return row+","+col
+   }
+
+}
+正课：
+0.方法的签名：方法名+参数列表
+1.方法的重载(Overload):
+  1)同一个类中，方法名称相同，参数列表不同
+  2)编译器在编译时自动根据方法的签名来绑定调用
+2.构造方法:
+3.this关键字:
+4.引用类型数组:
