@@ -30,6 +30,174 @@ class  Cell{
 1.方法的重载(Overload):
   1)同一个类中，方法名称相同，参数列表不同
   2)编译器在编译时自动根据方法的签名来绑定调用
-2.构造方法:
-3.this关键字:
+2.构造方法(构造器、构建器、构造函数)：
+  1)常常用于给成员变量赋初值
+  2)与类同名，没有返回类型
+  3)在创建(new)对象时被自动调用
+  4)若自己不写构造方法，则编译器默认提供无参构造
+            若自己写了构造，则不再默认提供
+  5)构造方法可以重载
+3.this:指代当前对象，哪个对象调指的就是哪个对象
+                     方法中访问成员变量之前默认都有个this.
+  this的用法：
+    1)this.成员变量名--------访问成员变量
+    2)this.方法名()---------调用方法
+    3)this()--------------调用构造方法
+    
 4.引用类型数组:
+
+
+Cell c = new Cell(2,5);
+
+Cell c = new Cell();
+c.row = 2;
+c.col = 5;
+
+class Cell{
+int row;
+int col;
+Cell(){
+   this(0);
+}
+Cell(int n){
+   this(n,n);
+}
+Cell(int row, int col){
+   this.row = row;
+   this.col = col;
+   }
+}
+
+Cell c = new Cell(2,5);
+c.drop();
+
+class Cell{
+  int row;//成员变量
+  int col;
+  Cell(int row, int col){//局部变量
+    this.row = row; //c.row=2
+    this.col = col; //c.col=5
+  }
+  void drop(){
+      this.row++;//c.row++;
+  }
+}
+
+
+Cell c = new Cell();
+c.row = 2;
+c.col = 5;
+c.drop();
+
+class Cell{
+  int row;//成员变量
+  int col;
+  Cell(int row, int col){//局部变量
+    this.row = row;//就近原则
+    this.col = col;//把局部变量赋给成员变量，this不能省略,局部变量和成员变量同名this不能省略
+  }
+  void drop(){
+      this.row++;//c.row++;this可以省略
+  }
+}
+
+
+
+Cell c = new Cell();
+c.row = 2;
+c.col = 5;
+c.drop();
+c.moveLeft(3);
+String str = c.getCellInfo();
+
+Cell cc = new Cell();
+cc.row = 4;
+cc.col = 8;
+cc.drop();
+cc.moveLeft(2);
+
+class Cell{
+   int row;
+   int col;
+   void drop(){
+     this.row++;//c.row++;----cc.row=3
+   }
+   void moveLeft(int n){
+     this.col-=n;//c.col-=3;----cc.col=2
+   }
+   String getCellInfo(){
+     return this.row+","+this.col; //cc.row+","+c.col----3,2
+   }
+
+}
+
+
+class Cell{
+  int row;
+  int col;
+  Cell(int row1,int col1){
+      row = row1;
+      col = col1;
+   }
+}
+
+
+class Cell{
+  int row;
+  int col;
+  Cell(){
+    row=0;
+    col=0;
+  }
+  Cell(int row1,int col1){
+      row = row1;
+      col = col1;
+   }
+}
+
+
+Cell c = new Cell();
+Cell c = new Cell(2,5);
+
+Cell c = new Cell();
+c.row = 2;
+c.col = 5;
+
+
+Student zs = new Student();
+zs.name="zhangsan";
+zs.age=25
+zs.address="河北廊坊";
+
+Student ls = new Student();
+zs.name="lisi";
+zs.age=26
+zs.address="黑龙江佳木斯";
+
+Student zs = new Student();
+zs.setInfo("zhangsan",25,"廊坊")
+
+Student ls = new Student();
+ls.setInfo("lisi",26,"佳木斯")
+
+//1.创建一个学生对象
+//2.调用了Student的无参构造方法
+Student zs = new Student();
+
+Student zs = new Student("zhangsan",25,"廊坊");
+Student ls = new Student("lisi",26,"佳木斯");
+Student ww = new Student();
+
+class Student{
+  String name;
+  int age;
+  String address;
+  //给成员变量赋初值
+  Student(){
+  }
+  Student(String name1,int age1,String address1){
+     name=name1;
+     age=age1;
+     address=address1;
+  }
+}
