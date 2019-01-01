@@ -25,7 +25,7 @@ class  Cell{
    }
 
 }
-正课：
+笔记：
 0.方法的签名：方法名+参数列表
 1.方法的重载(Overload):
   1)同一个类中，方法名称相同，参数列表不同
@@ -45,6 +45,84 @@ class  Cell{
     3)this()--------------调用构造方法
     
 4.引用类型数组:
+1)Cell[] cells = new Cell[4];
+	cells[0]  = new Cell(2,5);
+	cells[1]  = new Cell(3,6);
+	cells[2]  = new Cell(4,7);
+	cells[3]  = new Cell(5,8);
+2)Cell[] cells = new Cell[]{
+    new Cell(2,5),
+    new Cell(3,6),
+    new Cell(4,7),
+    new Cell(5,8),
+}
+3)int[] []  arr   = new  int[3][];
+	arr[0] = new int[4];
+	arr[1] = new int[4];
+	arr[2] = new int[4];
+	arr[1][0] = 100;//给arr中第2个元素中的第1个元素赋值为100
+4)int[] []  arr   = new  int[3][4];
+  for(int i=0;i<arr.length;i++){
+     for(int j=0;j<arr[i].length;j++){
+        arr[i][j] = 100;
+     }
+  }
+  
+  
+  
+  i=0
+    j=0  00
+    j=1  01
+    j=2  02
+    j=3  03
+  i=1
+    j=0  10
+    j=1  11
+    j=2  12
+    j=3  13
+
+int   []  arr   = new  int[3];
+Cell  []  cells = new  Cell[4];
+
+//声明int[]型数组arr,包含3个元素
+//每个元素都是int[]型，默认值为null
+int[] []  arr   = new  int[3][];
+arr[0]-----------int[]型
+arr[0] = new int[2];
+arr[1] = new int[3];
+arr[2] = new int[2];
+给arr中第2个元素中的第1个元素赋值为100
+arr[1][0] = 100;
+
+arr-------------------int[][]
+arr[0]----------------int[]
+arr[0][0]-------------int
+
+int[] arr = new int[]{
+    2,
+    5,
+    8
+};
+Cell[] cells = new Cell[]{
+    new Cell(2,5),
+    new Cell(3,6),
+    new Cell(4,7),
+    new Cell(5,8),
+}
+
+//声明int型数组arr,包含3个元素
+//每个元素都是int型，默认值为0
+int[] arr = new int[3];
+arr[0]------------int类型
+arr[0] = 5;
+int a = 5;
+
+//声明Cell型数组cells,包含4个元素
+//每个元素都是Cell型，默认值为null
+Cell[] cells = new Cell[4];//创建Cell数组对象
+cells[0]----------Cell类型
+cells[0] = new Cell(2,5);//创建Cell对象
+Cell c = new Cell(2,5);
 
 
 Cell c = new Cell(2,5);
@@ -201,3 +279,69 @@ class Student{
      address=address1;
   }
 }
+
+1)找对象:一堆T型，一堆J型，一堆I型.....
+2)抽类:T,J,I,O,L,S,Z
+3)设计类中的成员变量和方法
+4)测试
+
+class Cell{
+  int row;
+  int col;
+}
+T t1 = new T();//00,01,02,11
+T t1 = new T(0,0);//00,01,02,11
+T t1 = new T(2,5);//25,26,27,36
+class T{
+   Cell[] cells;
+   T(){
+      this(0,0);
+   }
+   T(int row, int col){
+      cells = new Cell[4];
+      cells[0] = new Cell(row,col);
+      cells[1] = new Cell(row,col+1);
+      cells[2] = new Cell(row,col+2);
+      cells[3] = new Cell(row+1,col+1);
+   }
+   void drop(){
+      for(int i=0;i<cells.length;i++){
+         cells[i].row++;
+      }
+   }
+   void moveLeft(){
+      for(int i=0;i<cells.length;i++){
+         cells[i].col--;
+      }
+   }
+   void moveRight(){
+      for(int i=0;i<cells.length;i++){
+         cells[i].col++;
+      }
+   }
+   void  print(){//测试
+   for(int i=0;i<cells.length;i++){
+     String str = cells[i].getCellInfo();
+     System.out.println(str);
+     //System.out.println(cells[i].row+","+cells[i].col);
+     }
+   }
+}
+class J{
+   Cell[] cells;
+      J(){
+      this(0,0);
+   }
+   J(int row, int col){
+      cells = new Cell[4];
+      cells[0] = new Cell(row,col);
+      cells[1] = new Cell(row,col+1);
+      cells[2] = new Cell(row,col+2);
+      cells[3] = new Cell(row+1,col+2);
+   }
+}
+class I{}
+class O{}
+class L{}
+class S{}
+class Z{}
