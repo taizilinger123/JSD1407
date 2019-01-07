@@ -98,6 +98,42 @@ class O{
      super.方法名()--------调用父类的方法
      super()-------------调用父类的构造方法
 4.向上造型：
+  1)父类型的引用指向子类的对象
+  2)能点出来什么，看引用的类型
+
+Person o1 = new Student();
+Person o2 = new Teacher();
+Person o3 = new Doctor();
+
+//动物是动物
+Animal o1 = new Animal();
+//老虎是老虎
+Tiger o2 = new Tiger();
+
+//老虎是动物
+Animal o3 = new Tiger();//向上造型
+
+class Animal{
+}
+class Tiger extends Animal{  //is a的关系
+}
+
+
+T型参数，只能接收T型对象
+J型参数，只能接收J型对象
+O型参数，只能接收O型对象
+L型参数，只能接收L型对象
+I型参数，只能接收I型对象
+S型参数，只能接收S型对象
+Z型参数，只能接收Z型对象-------重载(代码重复)
+
+
+是和1个格没配上就打-，还是和所有格都没配上才打-
+
+并非一次判断得到最终结果-------开关
+
+何时打*()-----行列匹配就打*
+何时打-()-----4个格都没配上才打-
 
 Coo o = new Coo();
 o.c = 1;
