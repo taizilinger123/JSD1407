@@ -1,0 +1,94 @@
+回顾：
+1.内存管理：堆、栈、方法区
+2.继承：避免代码重复，有利于代码的重用
+      extends
+                  父：共有的  子：特有的
+                  子继承父，子具有：父+子
+                  单一继承，传递性
+                  构造子之前必须先构造父，子构造中若不写，则默认super()调父类的无参构造，若自己写了，则不再默认提供
+3.super：指代当前对象的父类对象
+      super.成员变量名
+      super.方法名()
+      super()
+4.向上造型：
+  1)父类型的引用指向子类的对象
+  2)能点出来什么，看引用的类型
+
+
+正课：
+1.方法的重写(Override):
+  1)发生在父子类中，方法名相同，参数列表相同，方法体不同
+  2)重写方法被调用时，看对象的类型
+2.重写与重载的区别：----常见面试题
+  1)重写:父子类中，方法名相同，参数列表相同，方法体不同
+                      遵循"运行期"绑定，根据对象的类型调用方法
+  2)重载:一个类中，方法名相同，参数列表不同，方法体不同
+                      遵循"编译期"绑定，根据引用的类型绑定方法
+3.package和import:
+4.访问控制修饰符：
+5.static:
+6.final:
+
+
+类型从小到大依次为：
+byte,short,int,long,float,double
+     char
+
+
+我继承了一个饭店(中餐)
+----我还是中餐(不需要重写)
+----我改为西餐(重写)
+----我想中餐之上加个西餐(重写并super)
+
+Student zs = new Student();
+zs.name = "zhangsan";
+zs.age = 25;
+zs.address = "廊坊";
+zs.className = "JSD1604";
+zs.sayHi();//zhangsan, 25,廊坊,JSD1604
+
+Teacher wkj = new Teacher();
+wkj.name = "wangkejing";
+wkj.age = 37;
+wkj.address = "佳木斯";
+wkj.salary = 5000;
+wkj.sayHi();//wangkejing,37,佳木斯
+
+Doctor doc = new Doctor();
+doc.name = "lisi";
+doc.age = 45;
+doc.address = "山东";
+doc.level = "主任医师";
+doc.sayHi();//lisi,45,山东
+
+能点出来什么，看引用的类型(看前面p1/p2前面),向上造型，前后不一样，父造子,调用子类的
+重写方法被调用时，看对象的类型(看new后面)
+Student  p2 = new Student();
+p2.sayHi();//调Student的
+Person p1 = new Student();
+p1.sayHi();//调Student的
+
+
+class Person{
+  String name;
+  int age;
+  String address;
+  void sayHi(){
+     System.out.println(name+","+age+","+address)
+  }
+}
+class Student extends Person{
+   String className;
+   void sayHi(){
+     System.out.println(name+","+age+","+address+","+className)
+  }
+}
+class Teacher extends Person{
+   double salary;
+   void sayHi(){
+     System.out.println(name+","+age+","+address+","+salary)
+  }
+}
+class Doctor extends Person{
+   String level;
+}
