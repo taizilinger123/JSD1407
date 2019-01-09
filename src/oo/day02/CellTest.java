@@ -1,4 +1,5 @@
 package oo.day02;
+//import oo.day01.Demo;
 //格子类的测试类
 public class CellTest {
 	public static void main(String[] args) {
@@ -6,7 +7,8 @@ public class CellTest {
 	  Cell c2 = new Cell(3);   //调1个参数构造
 	  Cell c3 = new Cell(2,5); //调2个参数构造
 	  //Cell c4 = new Cell(2,5,8); //编译错误，没有3个参数的构造
-	  
+//	  oo.day01.Demo o = new oo.day01.Demo();
+//	  Demo o = new Demo();
 	  /*	
       Cell c = new Cell();
       c.row = 4;

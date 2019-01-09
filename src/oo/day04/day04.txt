@@ -24,11 +24,72 @@
                       遵循"运行期"绑定，根据对象的类型调用方法
   2)重载:一个类中，方法名相同，参数列表不同，方法体不同
                       遵循"编译期"绑定，根据引用的类型绑定方法
-3.package和import:
+3.package：
+  1)作用：避免类的命名冲突
+  2)包名可以有层次结构
+  3)建议：包名所有字母都小写
+  4)类的完全限定名：包名.类型
+  import:
+  1)作用:声明类/引入类
+  2)同包中的类可以直接访问
+            不同包中的类想访问：
+      2.1)先import声明类再访问类(建议)
+      2.2)类的全称-----太繁琐(不建议)
 4.访问控制修饰符：
+  1)public:公开的，任何类
+  2)private:私有的，本类
+  3)protected:受保护的，本类、子类、同包类
+  4)默认的：什么也不写，本类、同包类
+      类的访问修饰：public和默认的(默认的就是什么都不写)
+      类成员的访问修饰：如上4种都可以
 5.static:
 6.final:
 
+
+数据私有化(private)，行为公开化(public)
+class Card{
+  private  String cardId; //卡号
+  private  String cardPwd;//密码
+  private  double balance;//余额
+  
+  public boolean payMoney(double money){//支付金额
+    if(balance>=money){
+       balance-=money;
+       return true;
+    }
+    return false;
+  }
+  
+  public boolean checkPwd(string pwd){//检查密码
+    if(cardPwd.equals(pwd)){
+       return true;
+    } 
+    return false;
+  }
+}
+
+package a.b.c.d.e.f;
+class Aoo{
+}
+class Boo{
+  void show(){
+     Aoo o = new Aoo();
+  }
+}
+
+package b;
+import a.b.c.d.e.f.Aoo;
+class Coo{
+  void show(){
+     Aoo o = new Aoo();
+  }
+}
+
+java项目比较大
+
+项目非常大的时候，建议：
+域名反写.项目名称.模块名称.类型
+cn.tedu . manager . stumanager . Student
 
 类型从小到大依次为：
 byte,short,int,long,float,double
