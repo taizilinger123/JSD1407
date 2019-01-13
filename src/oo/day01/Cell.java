@@ -8,7 +8,7 @@ public class Cell {
 	  row++;//行号增1
   }
   
-  void moveLeft(int n){
+  void moveLeft(int n){//左移n格
 	  col-=n;//列号减n
   }
   String getCellInfo(){//获取行号和列号

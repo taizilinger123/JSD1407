@@ -15,19 +15,21 @@ public class CellTest {
 	  c.row = 2;
 	  c.col = 5;
 	  System.out.println("原始位置：");
-	  printWall(c);//Cell cc=c
+	  CellTest ct = new CellTest();//下面的方法没有static就必须自己创建对象去ct.
+	  ct.printWall(c);//Cell cc=c
 	  
 	  c.drop();
 	  System.out.println("下落后：");
-	  printWall(c);
+	  ct.printWall(c);
 	  
 	  c.moveLeft(1);
 	  System.out.println("左移一行:");	  
-	  printWall(c);
+	  ct.printWall(c);
 	  
 	}
     //打墙+打格
-	public static void printWall(Cell cc){
+//	public static void printWall(Cell cc){
+	public  void printWall(Cell cc){
 		  for(int i=0;i<20;i++){//行
 			  for(int j=0;j<10;j++){//列
 				  if(i==cc.row && j==cc.col){//行列匹配
