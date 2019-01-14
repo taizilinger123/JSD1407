@@ -57,6 +57,85 @@ class Boo extends Aoo{
     5.3)包含抽象方法，为所有子类提供一个统一的入口，子类有不同的实现
     
 4.接口：
+  1)是一个标准、规范
+            遵守了这个标准，就能干某件事----API后了解
+  2)由interface定义
+  3)只能包含常量和抽象方法
+  4)接口不能被实例化
+  5)接口是需要被实现/继承的，实现类/子类：
+                必须重写接口中的所有抽象方法
+  6)一个类可以实现多个接口，用逗分隔
+            若又继承又实现时，应先继承extends后实现implements
+  7)接口可以继承接口
+  
+类对类-------------继承
+接口对接口-----------继承
+类和接口------------实现
+
+Inter1 o1;//正确
+new Inter1();//编译错误，接口不能被实例化
+Inter2 o2 = new Aoo();//向上造型
+Inter1 o3 = new Aoo();//向上造型
+  
+interface Inter1{
+  void a();
+}  
+interface Inter2 extends Inter1{
+  void b();
+}
+class Aoo implements Inter2{
+   public void b(){}  //子类继承父类，子类权限要比父类大,父类接口是默认的是public，子类就写最大的public大于等于父类的权限
+   public void a(){}
+}
+  
+
+interface Inter1{
+  void a();
+}
+interface Inter1{
+  void b();
+}
+abstract class Aoo{
+  abstract void c();
+}
+class Boo extends Aoo implements Inter1,Inter2{
+  public void a(){}
+  public void b(){}
+  void c(){}
+}
+
+
+interface Inter1{
+    void a();
+    void b();
+}
+class Aoo implements Inter1{
+   public  void a(){}
+   public  void b(){}
+}
+
+
+new Inter1();//编译错误
+interface  Inter1{
+   public  static final int NUM = 5;
+   public  abstract void  show();
+   
+   double PI = 3.14159;//默认public static final 
+   void sayHi();//默认public abstract
+   
+   int num;//编译错误
+   public void say(){}//编译错误
+}
+
+
+生活中的接口：
+1.电脑厂商留的USB接口----制定标准、规范
+  U盘、键盘、鼠标厂商-----遵守标准、规范
+2.国家对开发商----------制定标准、规范
+      国家对家具厂商---------制定标准、规范
+     开发商、家具厂商--------遵守标准、规范
+3.银行----------------制定标准、规范
+  银行卡----------------遵守标准、规范
 
 abstract class Animal{//是动物都能跑
   abstract void run{};
@@ -191,12 +270,5 @@ class Circle extends Shape{//圆形
 abstract class Six extends Shape{//六边形
 }
 
-
-
 Shape a;//正确
 new Shape();//编译错误
-
-
-
-
-
