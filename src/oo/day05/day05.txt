@@ -39,7 +39,7 @@ class Boo extends Aoo{
   1)必须声明同时初始化
   2)通过类名点来访问，不能改变
   3)建议：常量名所有字母都大写
-  4)在编译时会自动替换为具体的值,效率高
+  4)在编译时被直接替换为具体的值,效率高
 2.抽象方法：
   1)由abstract修饰
   2)只有方法的定义，没有方法的实现(大括号都没有)
@@ -67,6 +67,48 @@ class Boo extends Aoo{
   6)一个类可以实现多个接口，用逗分隔
             若又继承又实现时，应先继承extends后实现implements
   7)接口可以继承接口
+  
+接口是完全抽象的抽象类
+接口是继承的单根性的扩展----体会
+
+double num = input.nextDouble();
+
+余额-取的钱>100------里面多于100
+余额-取的钱>=-100----透支100
+
+ICBCImpl card1 = new ICBCImpl();//工行卡
+ICBC     card2 = new ICBCImpl();//工行卡
+UnionPay card3 = new ICBCImpl();//银联卡--工行卡
+
+interface UnionPay{//银联
+    void 存();
+    void 取();
+    void 转账();
+    void 查询余额();
+}  
+interface  ICBC extends UnionPay{//工行
+    void 在线支付();
+}  
+interface ABC extends UnionPay{//农行
+    void 支付电话费();
+}
+
+
+class ICBCImpl implements ICBC{//工行卡
+    public void 存(){}
+    public void 取(){}
+    public void 转账(){}
+    public void 查询余额(){}
+    public void 在线支付(){}
+}
+
+class ABCImpl implements ABC{//农行卡
+    public void 存(){}
+    public void 取(){}
+    public void 转账(){}
+    public void 查询余额(){}
+    public void 支付电话费(){}
+}
   
 类对类-------------继承
 接口对接口-----------继承
