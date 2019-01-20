@@ -168,7 +168,7 @@ System.out.println("helloworld");
               
 Debug:找到错误的出处
 
-全局搜索：ctrl+H
+全局搜索：ctrl+H  找main入口然后run as
 建议提示:Alt+/
 删除当前行：ctrl+D
 自动引入所需包：ctrl+shift+o
