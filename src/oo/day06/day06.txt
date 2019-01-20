@@ -81,11 +81,20 @@ class Shape{
 ABCATM atm = new ABCATM();//atm机对象
 UnionPay card = new ABCImpl();//银联卡-农行卡
 atm.insertCard(card);//插卡
+atm.payTellBill();//支付电话费
 
 class ABCATM{//农行ATM机
     private UnionPay card;//银联卡
     public void insertCard(UnionPay card){//插卡
        this.card = card;
+    }
+    public void payTelBill(){//支付电话费--按钮入口
+        if(card instanceof ABC){//是农行卡
+          ABC  abcCard = (ABC)card;
+          abcCard.payTelBill("12345612345",500);
+        }else{
+          System.out.println("不是农行卡，不能支付电话费")
+        }
     }
 }
 

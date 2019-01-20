@@ -1,16 +1,25 @@
 package oo.day06;
-//银行卡系统
+//ATM机系统
 public class UnionPayTest {
 	public static void main(String[] args) {
 		ABCATM atm = new ABCATM();//atm机对象
 		UnionPay card = new ABCImpl();//银联卡-农行卡
 		atm.insertCard(card);//插卡
+		atm.payTelBill();//支付电话费
 	}
 }
 class ABCATM{//农行的ATM机
     private UnionPay card;//银联卡
     public void insertCard(UnionPay card){//插卡
        this.card = card;
+    }
+    public void payTelBill(){//支付电话费--入口按钮
+    	if(card instanceof ABC){//是农行卡
+    		ABC abcCard = (ABC)card;//强转为农行卡
+    		abcCard.payTelBill("12345678912", 500);//支付电话费
+    	}else{//不是农行卡
+    		System.out.println("不是农行卡，不能支付电话费");
+    	}
     }
 }
 
@@ -35,5 +44,7 @@ class ABCImpl implements ABC{//农行卡
 	public double getBalance(){return 0.0;}
 	public boolean drawMoney(double number){return true;}
 	public boolean checkPwd(String input){return true;}
-	public boolean payTelBill(String phoneNum,double sum){return true;}
+	public boolean payTelBill(String phoneNum,double sum){
+		System.out.println("支付电话费成功");
+		return true;}
 }
