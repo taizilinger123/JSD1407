@@ -168,6 +168,10 @@ System.out.println("helloworld");
               
 Debug:找到错误的出处
 
+全局搜索：ctrl+H
+建议提示:Alt+/
+删除当前行：ctrl+D
+自动引入所需包：ctrl+shift+o
 打桩(就是把东西打出来)
 
 F5:逐步调试(进入到方法中)
