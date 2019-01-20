@@ -1,0 +1,243 @@
+回顾：
+1.static final常量：
+             必须声明同时初始化，不能改变，类名点来访问
+             建议所有字母都大写
+             编译时被直接替换为具体的值---效率高
+2.抽象方法：
+    abstract,只有方法的定义，没有方法的具体实现
+3.抽象类：
+    abstract,包含抽象方法的类必须是抽象类
+            不能被实例化，需要被继承的，子类：
+                   要么也声明为抽象类
+                   要么重写所有抽象方法----常用
+           意义：
+                   父类的意义：封装公共的数据和行为被子类公用
+                                           为所有子类提供一种统一的类型
+                  特有的意义：包含抽象方法，为所有子类提供一个统一的入口
+4.接口：
+          是一个标准、规范
+   interface定义，只能包含常量和抽象方法
+         不能被实例化，需要被实现的，实现类：
+              必须重写所有抽象方法
+         一个类可以实现多个接口，用逗号分隔，
+         若又继承又实现时，应先继承后实现
+         接口可以继承接口
+      
+Shape[] shapes = new Shape[4];
+
+class Six extends Shape{
+   public Six(double c){
+       this.c = c;
+   }
+   public double area(){
+       return 0.0721*c*c;
+   }
+}
+
+interface CCB extends UnionPay{
+   public void payFire(double number);
+}
+class CCBImpl implements CCB{
+         重写4个
+}
+
+接口不能包含构造方法
+抽象类可以包含构造方法
+接口-----常量
+抽象类----成员变量，常量，普通方法，抽象方法
+
+class Teteromino{
+   drop()/moveLeft()/moveRight()/print()
+}
+class Shape{
+  area()
+}
+
+正课：
+1.多态：
+  1)意义：
+    1.1)同一类型的引用指向不同的对象时，有不同的实现
+        ---------行为的多态：cut(),run()
+    1.2)同一对象被造型为不同的类型时，有不同的功能
+        ---------对象的多态：我，水
+  2)向上造型：
+    2.1)父类型的引用指向子类的对象
+    2.2)能造型成的类型有：
+                               父类型、实现的接口
+    2.3)能点出来什么，看引用的类型
+  3)强制类型转换,成功的条件有两个：
+     3.1)引用所指向的对象，就是该类型
+     3.2)引用所指向的对象，实现了该接口
+  4)建议强转之前通过instanceof来判断引用是否是某种类型
+    instanceof返回boolean结果
+            强制成功的条件就是它为true的条件
+2.内部类：
+3.面向对象总结：
+
+农行的ATM机系统：
+1.什么卡都能插
+2.只有农行卡才能支付电话费
+
+ABCATM atm = new ABCATM();//atm机对象
+UnionPay card = new ABCImpl();//银联卡-农行卡
+atm.insertCard(card);//插卡
+
+class ABCATM{//农行ATM机
+    private UnionPay card;//银联卡
+    public void insertCard(UnionPay card){//插卡
+       this.card = card;
+    }
+}
+
+UnionPay card = new ICBCImpl();
+UnionPay card = new ABCImpl();
+UnionPay card = new CCBImpl();
+
+
+System.out.println(o1 instanceof Boo);//true 
+System.out.println(o1 instanceof Inter1);//true
+System.out.println(o1 instanceof Coo);//False 
+
+Aoo o1 = new Boo();//向上造型
+Boo o2 = (Boo)o1;//符合条件1
+Inter1 o3 = (Inter1)o1;//符合条件2
+Coo o4 = (Coo)o1;//classCastException类型转换异常
+
+if(o1 instanceof Coo){
+   Coo o4 = (Coo)o1;
+}
+
+interface Inter1{}
+class Aoo{}
+class Boo extends Aoo implements Inter1{}
+class Coo extends Aoo{}
+
+向上造型之后，能点出来的东西：
+        多了还是少了-----等于或少于
+
+父类大，子类小
+Tetromino o1 = new T();//向上造型--自动类型转换
+T o2 = new Tetromino();
+
+Tetromino o1 = new T();
+Tetromino o2 = new J();
+Shape s1 = new Square();
+Shape s2 = new Circle();
+ICBC card1 = new ICBCImpl();
+UnionPay card2 = new ICBCImpl();
+
+既是也是
+我  me = new 我();//me都可以
+讲师              p1 = me;//p1,p2,p3,p4看引用在前面
+孩子他妈      p2 = me;
+老公的老婆  p3 = me;
+
+me.授课();
+me.揍他();
+me.咬他();
+me.收工资();
+p1.授课();
+p2.揍他();
+p3.咬他();
+p3.收工资();
+
+interface  讲师{
+   void 授课();
+}
+interface 孩子他妈{
+   void 揍他();
+}
+interface 老公的老婆{
+   void 咬他();
+   void 收工资();
+}
+class 我 implements 讲师,孩子他妈,老公的老婆{
+   public void  授课(){}
+   public void  揍他(){}
+   public void  咬他(){}
+   public void  收工资(){}
+}
+
+动物   a1 = new 老虎();
+动物   a2 = new 鸟();
+动物   a3 = new 鱼();
+
+a1.run();//地上
+a2.run();//天上
+a3.run();//水里
+
+abstract  class 动物{
+   abstract void run();
+}
+class 老虎  extends 动物{
+   void run(){地上跑}
+}
+class 鸟  extends 动物{
+   void run(){天上飞}
+}
+class 鱼  extends 动物{
+   void run(){水里游}
+}
+
+cut()是多态的
+
+同一类型的引用指向不同的对象，有不同的实现
+
+人 p1 = new 理发师();
+人 p2 = new 外科医生();
+人 p3 = new 演员();
+
+p1.cut();//剪发
+p2.cut();//开刀
+p3.cut();//停止表演
+
+abstract  class 人{
+  abstract void cut();
+}
+class 理发师 extends 人{
+  void cut(){剪发}
+}
+class 外科医生  extends 人{
+  void cut(){开刀}
+}
+class 演员  extends 人{
+  void cut(){停止表演}
+}
+
+设计原则：
+1.将公共的属性和行为封装到父类中
+2.所有子类的行为都一样-----普通方法
+      所有子类的行为不一样-----抽象方法
+3.若符合既是也是原则时，使用接口
+
+达内教学副总裁：
+   解决问题(),培训员工(),编辑稿件()
+达内讲师：
+   解决问题(),培训员工(),编辑稿件()
+达内项目经理:
+   编辑稿件()
+   
+若方法是所有子类的共有行为------父类
+若方法是部分子类的共有行为------接口
+
+interface 企业技术顾问{
+    void 解决问题();
+    void 培训员工();
+}
+interface 技术图书作者{
+    void 编辑稿件();
+}
+abstract class 达内职员{
+           姓名，年龄，工资
+    void 上班打卡(){按个手纹、拍个照}
+    void 下班打卡(){按个手纹、拍个照}
+    abstract void 完成工作();
+}
+class 达内教学副总裁 extends 达内职员   implements 企业技术顾问,技术图书作者{
+}
+class  达内讲师 extends 达内职员  implements 企业技术顾问,技术图书作者{
+}
+class 达内项目经理  extends 达内职员  implements 技术图书作者{
+}
+class 达内班主任   extends 达内职员{
+}
