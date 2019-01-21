@@ -169,10 +169,12 @@ System.out.println("helloworld");
 Debug:找到错误的出处
 
 全局搜索：ctrl+H  找main入口然后run as
-建议提示:Alt+/
+建议提示:Alt+/ 写各种for循环提示自动补全
 删除当前行：ctrl+D
 自动引入所需包：ctrl+shift+o
-认识并使用display:(window->show view->display/Debug Shell->display里写上代码然后全选选中->右键->display)
+认识并使用display:(window->show view->display/Debug Shell->display里写上代码然后全选选中->右键->display),在display
+中选中写进去的代码或者粘贴代码到display中然后ctrl+shift+D就会得出结果
+如果你想知道一个类的方法到底被那些其他的类调用，那么请选中这个方法名，然后按"Ctrl+Alt+H"
 打桩(就是把东西打出来)
 
 F5:逐步调试(进入到方法中)
