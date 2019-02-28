@@ -51,8 +51,9 @@ public class StringDemo8 {
 			  break;
 		  case 2:
 			  ran+=random.nextInt(10);	  
+			  break;
 	 }
-     System.out.print(ran);
-    }	  
+    }	
+    System.out.print(ran);
  }
 }
