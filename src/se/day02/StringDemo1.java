@@ -17,6 +17,7 @@ public class StringDemo1 {
         * boolean matches(String regex)
         * 使用给定的正则表达式验证当前字符串是否满足
         * 格式要求，满足返回true
+        * 字符串matches是全匹配的
         */
        boolean match = mail.matches(regex);
        if(match){
