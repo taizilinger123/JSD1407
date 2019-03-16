@@ -15,4 +15,14 @@
 正则表达式只关注格式是否正确不关心内容是否有效
 #############################################
 ==比较的是是否为同一个对象，equals比较的是这两个对象像不像
-
+String str = scanner.nextLine();
+String intRegex = "\\d+";
+String doubleRegex = "[0-9]+\\.[0-9]+";
+if(str.matches(intRegex)){
+   int i = Integer.parseInt(str);
+   System.out.println("整数:"+i);
+}else if(str.matches(doubleRegex)){
+   System.out.println("小数:"+d);
+}else{
+   System.out.println("不是数字");
+}
