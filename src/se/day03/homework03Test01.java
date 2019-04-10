@@ -43,11 +43,6 @@ public class homework03Test01 {
 	  date = calendar.getTime();
 	  
 	  dateStr = sdf.format(date);
-	  System.out.println("促销日为:"+dateStr);
-	  
-	  
-	  
-	  
-	  
+	  System.out.println("促销日为:"+dateStr);	  
   }
 }
