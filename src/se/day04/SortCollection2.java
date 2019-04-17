@@ -6,8 +6,6 @@ import java.util.List;
 
 import se.day03.Cell;
 
-
-
 /**
  * comparable接口
  * @author sige
@@ -27,6 +25,7 @@ public class SortCollection2 {
 	 * 只有实现了该接口才认为是可比较的元素
 	 */
 	Collections.sort(list);
+	System.out.println(list);
 	
   }
 }
