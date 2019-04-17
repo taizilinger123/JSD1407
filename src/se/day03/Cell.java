@@ -4,7 +4,7 @@ package se.day03;
  * @author sige
  *
  */
-public class Cell {
+public class Cell implements Comparable<Cell>{
 	public int x;
 	public int y;
 	public Cell(int x, int y){
@@ -55,6 +55,20 @@ public class Cell {
 		}
 
 		return false;
+	}
+    /*
+     * 比较大小的方法
+     * 返回值不关注具体的值，只关注取值范围
+     * 返回值<0:当前对象比给定的对象小
+     * 返回值=0：两个对象相等
+     * 返回值>0:当前对象比给定的对象大
+     */
+	public int compareTo(Cell o) {
+        /*
+         * 比较规则如下：
+         * y值大的就大
+         */
+		return this.y - o.y;
 	}
 	
 	
