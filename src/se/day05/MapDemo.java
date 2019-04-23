@@ -56,6 +56,27 @@ public class MapDemo {
 	 */
 	num = map.get("高数");
 	System.out.println("高数:"+num);
+	/*
+	 * boolean containsKey(K k)
+	 * 判断当前Map中是否含有给定的key
+	 * 是否含有是根据key的equals判断得
+	 */
+	 //查看是否含有"数学"
+	if(map.containsKey("数学")){
+		System.out.println("包含数学");
+	}else{
+		System.out.println("不包含数学");
+	}
+	/*
+	 * V remove(K k)
+	 * 根绝给定的key删除这一项
+	 * 返回值为删除的value
+	 */
+	System.out.println(map);
+	Integer remove = map.remove("化学");
+//	Integer remove = map.remove("gaoshu");
+	System.out.println(map);
+	System.out.println(remove);
 	
   }
 }
