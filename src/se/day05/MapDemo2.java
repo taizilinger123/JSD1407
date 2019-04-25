@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class MapDemo2 {
   public static void main(String[] args) {
-	Map<Point,Integer> map = new HashMap<Point,Integer>();
+	Map<Point,Integer> map = new HashMap<Point,Integer>(16);
 	
 	Point p = new Point(1, 2);
 	
