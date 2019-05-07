@@ -17,6 +17,7 @@ public class RandomAccessFileDemo3 {
       * 3:循环从原文件中读取每一个字节并写入目标文件中
       * 4:关闭两个RandomAccessFile
       */
+	  long start = System.currentTimeMillis();
 	  //1
 	  RandomAccessFile src = new RandomAccessFile("src.jpg","r");
 	  //2
@@ -31,5 +32,7 @@ public class RandomAccessFileDemo3 {
 	  System.out.println("拷贝完毕");
 	  src.close();
 	  des.close(); 
+	  long end = System.currentTimeMillis();
+	  System.out.println("耗时:"+(end-start)+"ms");
   }
 }
