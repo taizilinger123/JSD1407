@@ -20,9 +20,7 @@ public class homework03 {
 	      InputStreamReader isr = new InputStreamReader(fis,"UTF-8");
 	      BufferedReader br = new BufferedReader(isr);
           /*
-	      BufferedReader br = new BufferedReader();
-	      
-          
+	      BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("pw.txt"),"UTF-8"));
 	      */
 	      StringBuilder  builder = new StringBuilder();
 	      String str = null;
