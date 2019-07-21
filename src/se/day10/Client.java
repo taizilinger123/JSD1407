@@ -1,5 +1,8 @@
 package se.day10;
 
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 /**
  * 客户端应用程序
@@ -32,7 +35,30 @@ public class Client {
    * 客户端启动方法
    */
   public void start(){
-	  
+	  try {
+		 /*
+		  * 可以通过Socket的getOutputStream()
+		  * 方法获取一条输出流，用于将信息发送
+		  * 至服务端 
+		  */
+	     OutputStream  out = socket.getOutputStream();
+	     /*
+	      * 使用字符流来根据指定的编码集将字符串
+	      * 转换为字节后，在通过out发送给服务端
+	      */
+	     OutputStreamWriter osw = new OutputStreamWriter(out,"UTF-8");
+	     /*
+	      * 将字符流包装为缓冲字符流，就可以按行
+	      * 为单位写出字符串了
+	      */
+	     PrintWriter pw = new PrintWriter(osw);
+	     
+	     pw.println("你好!服务端!");
+	     pw.flush();
+	     
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
   }
   
   public static void main(String[] args) {
