@@ -52,7 +52,12 @@ public class Server {
 			 */
 			InetAddress address = socket.getInetAddress();
 //			socket.getLocalAddress();
-			System.out.println("客户端连接了");
+			//获取远端计算机的IP地址
+			String ha = address.getHostAddress();
+//			address.getCanonicalHostName();
+			//获取客户端的端口号
+			int port = socket.getPort();
+			System.out.println(ha+":"+port+" 客户端连接了");
 			
 			/*
 			 * 通过刚刚连上的客户端的Socket获取
