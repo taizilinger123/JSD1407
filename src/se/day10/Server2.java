@@ -1,6 +1,7 @@
 package se.day10;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
@@ -12,14 +13,14 @@ import java.net.Socket;
  * @author sige
  *
  */
-public class Server {
+public class Server2 {
    //运行在服务端的Socket
 	private ServerSocket server;
 	/**
 	 * 构造方法，用于初始化服务端
 	 * @throws IOException 
 	 */
-	public Server() throws Exception{
+	public Server2() throws Exception{
 	   try {
 		/*
 		 * 创建ServerSocket时需要指定服务端口 
@@ -51,7 +52,6 @@ public class Server {
 			 * 对于服务端而言，远端就是客户端了
 			 */
 			InetAddress address = socket.getInetAddress();
-//			socket.getLocalAddress();
 			//获取远端计算机的IP地址
 			String ha = address.getHostAddress();
 //			address.getCanonicalHostName();
@@ -99,9 +99,9 @@ public class Server {
 	}
 	
 	public static void main(String[] args) {
-		Server server;
+		Server2 server;
 		try {
-			server = new Server();
+			server = new Server2();
 			server.start();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,5 +109,54 @@ public class Server {
 		}
 		
 	}
+	
+	/**
+	 * 服务端中的一个线程，用于与某个客户端交互。
+	 * 使用线程的目的是使得服务端可以处理多客户端了。
+	 * @author sige
+	 *
+	 */
+	class ClientHandler implements  Runnable{
+		//当前线程处理的客户端的Socket
+		private Socket socket;
+		/**
+		 * 根据给定的客户端的Socket,创建线程体
+		 * @param socket
+		 */
+		public ClientHandler(Socket socket){
+			this.socket = socket;
+		}
+		/**
+		 * 该线程会将当前Socket中的输入流获取
+		 * 用来循环读取客户端发送过来的消息。
+		 */
+		public void run(){
+			try{			
+				InputStream in = socket.getInputStream();
+				InputStreamReader isr = new InputStreamReader(in,"UTF-8");
+				BufferedReader br = new BufferedReader(isr);
+				String message = null;
+				while((message = br.readLine())!=null){
+				       System.out.println("客户端说："+message);
+				}
+			}catch (Exception e) {
+				//在Windows中的客户端，报错通常是因为客户端断开了连接
+				
+			}finally {
+				/*
+				 * 无论是linux用户还是windows
+				 * 用户，当与服务端断开连接后
+				 * 我们都应该在服务端与客户端
+				 * 断开连接
+				 */
+				try {
+					socket.close();
+				} catch (IOException e) {
+				}
+				System.out.println("一个客户端下线了...");
+			}
+		}
+	}
+	
 	
 }
