@@ -1,9 +1,13 @@
 package se.day10;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 /**
  * 客户端应用程序
  * @author sige
@@ -36,6 +40,11 @@ public class Client {
    */
   public void start(){
 	  try {
+		  //创建并启动线程，来接收服务端的消息
+		  Runnable runn = new GetServerInfoHandler();
+		  Thread t = new Thread(runn);
+		  t.start();
+		  
 		 /*
 		  * 可以通过Socket的getOutputStream()
 		  * 方法获取一条输出流，用于将信息发送
@@ -51,11 +60,18 @@ public class Client {
 	      * 将字符流包装为缓冲字符流，就可以按行
 	      * 为单位写出字符串了
 	      */
-	     PrintWriter pw = new PrintWriter(osw);
+	     PrintWriter pw = new PrintWriter(osw,true);
 	     
-	     pw.println("你好!服务端!");
-	     pw.flush();
 	     
+	     /*
+	      * 创建一个Scanner,用于接收用户输入的字符串
+	      */
+	     Scanner scanner = new Scanner(System.in);
+	     while(true){
+	    	 String str = scanner.nextLine();
+		     pw.println(str);
+	     }
+	  
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
@@ -69,5 +85,32 @@ public class Client {
 	    e.printStackTrace();
 		System.out.println("客户端初始化失败");
 	}
+  }
+  /**
+   * 该线程的作用是循环接收服务端发送过来的信息，并输出到控制台
+   * @author sige
+   */
+  class GetServerInfoHandler implements Runnable{
+	public void run() {
+		try {
+			/*
+			 * 通过Socket获取输入流
+			 */
+			InputStream in = socket.getInputStream();
+			//将输入流转换为字符输入流，指定编码
+			InputStreamReader isr = new InputStreamReader(in,"UTF-8");
+			//将字符输入流转换为缓冲流
+			BufferedReader br = new BufferedReader(isr);
+			String message = null;
+			//循环读取服务端发送的每一个字符串
+			while((message=br.readLine())!=null){
+				//将服务端发送的字符串输出到控制台
+				System.out.println(message);
+			}
+		} catch (Exception e) {
+		
+		}
+	}
+	  
   }
 }
