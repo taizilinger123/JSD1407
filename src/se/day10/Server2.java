@@ -87,6 +87,30 @@ public class Server2 {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * 将给定的输出流存入共享集合
+	 * @param pw
+	 */
+	public synchronized void addOut(PrintWriter pw){
+		allOut.add(pw);
+	}
+	/**
+	 * 将给定的输出流从共享集合中删除
+	 * @param pw
+	 * synchronized线程安全同步和互坼
+	 */
+	public synchronized void removeOut(PrintWriter pw){
+		allOut.remove(pw);
+	}
+	/**
+	 * 将给定的消息转发给所有客户端
+	 * @param message
+	 */
+	public synchronized void sendMessage(String message){
+		for(PrintWriter pw : allOut){
+			pw.println(message);
+		}
+	}
 	
 	public static void main(String[] args) {
 		Server2 server;
@@ -109,6 +133,8 @@ public class Server2 {
 	class ClientHandler implements  Runnable{
 		//当前线程处理的客户端的Socket
 		private Socket socket;
+		//当前客户端的IP
+		private String ip;
 		/**
 		 * 根据给定的客户端的Socket,创建线程体
 		 * @param socket
@@ -121,11 +147,13 @@ public class Server2 {
 			 */
 			InetAddress address = socket.getInetAddress();
 			//获取远端计算机的IP地址
-			String ha = address.getHostAddress();
+			ip = address.getHostAddress();
 //			address.getCanonicalHostName();
 			//获取客户端的端口号
 			int port = socket.getPort();
-			System.out.println(ha+":"+port+" 客户端连接了");
+			System.out.println(ip+":"+port+" 客户端连接了");
+			//通知其他用户，该用户上线了
+			sendMessage("["+ip+"]上线了");
 		
 		}
 		/**
@@ -152,7 +180,8 @@ public class Server2 {
 				 * 以便使得该客户端也能接收服务端
 				 * 转发的消息
 				 */
-				allOut.add(pw);
+//				allOut.add(pw);
+				addOut(pw);
 				//输出当前在线人数
 				System.out.println("当前在线人数为:"+allOut.size());
 	
@@ -162,7 +191,14 @@ public class Server2 {
 				String message = null;
 				while((message = br.readLine())!=null){
 //				       System.out.println("客户端说："+message);
-					pw.println(message);
+//					pw.println(message);
+					/*
+					 * 当读取到客户端发送过来的一条消息后，将该消息转发给所有客户端
+					 */
+//					for(PrintWriter o : allOut){
+//						o.println(message);
+//					}
+				    sendMessage(ip+"说:"+message);
 				}
 			}catch (Exception e) {
 				//在Windows中的客户端，报错通常是因为客户端断开了连接
@@ -171,9 +207,12 @@ public class Server2 {
 				/*
 				 * 首先将该客户端的输出流从共享集合中删除。
 				 */
-				allOut.remove(pw);
+//				allOut.remove(pw);
+				removeOut(pw);
 				//输出当前在线人数
 				System.out.println("当前在线人数为:"+allOut.size());
+				//通知其他用户，该用户下线了
+				sendMessage("["+ip+"]下线了");
 				/*
 				 * 无论是linux用户还是windows
 				 * 用户，当与服务端断开连接后
