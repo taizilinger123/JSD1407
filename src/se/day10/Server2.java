@@ -135,6 +135,8 @@ public class Server2 {
 		private Socket socket;
 		//当前客户端的IP
 		private String ip;
+		//当前客户端的昵称
+		private String nickName;
 		/**
 		 * 根据给定的客户端的Socket,创建线程体
 		 * @param socket
@@ -152,8 +154,9 @@ public class Server2 {
 			//获取客户端的端口号
 			int port = socket.getPort();
 			System.out.println(ip+":"+port+" 客户端连接了");
-			//通知其他用户，该用户上线了
-			sendMessage("["+ip+"]上线了");
+			//改为了使用昵称了，所以不在这里通知了
+//			//通知其他用户，该用户上线了
+//			sendMessage("["+ip+"]上线了");
 		
 		}
 		/**
@@ -188,6 +191,15 @@ public class Server2 {
 				InputStream in = socket.getInputStream();
 				InputStreamReader isr = new InputStreamReader(in,"UTF-8");
 				BufferedReader br = new BufferedReader(isr);
+				
+				/*
+				 * 当创建好当前客户端的输入流后
+				 * 读取的第一个字符串，应当是昵称
+				 */
+				nickName = br.readLine();
+				//通知所有客户端，当前用户上线了
+				sendMessage("["+nickName+"]上线了");
+				
 				String message = null;
 				while((message = br.readLine())!=null){
 //				       System.out.println("客户端说："+message);
@@ -198,7 +210,7 @@ public class Server2 {
 //					for(PrintWriter o : allOut){
 //						o.println(message);
 //					}
-				    sendMessage(ip+"说:"+message);
+				    sendMessage(nickName+"说:"+message);
 				}
 			}catch (Exception e) {
 				//在Windows中的客户端，报错通常是因为客户端断开了连接
@@ -212,7 +224,7 @@ public class Server2 {
 				//输出当前在线人数
 				System.out.println("当前在线人数为:"+allOut.size());
 				//通知其他用户，该用户下线了
-				sendMessage("["+ip+"]下线了");
+				sendMessage("["+nickName+"]下线了");
 				/*
 				 * 无论是linux用户还是windows
 				 * 用户，当与服务端断开连接后

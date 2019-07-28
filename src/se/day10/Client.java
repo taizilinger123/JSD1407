@@ -67,6 +67,20 @@ public class Client {
 	      * 创建一个Scanner,用于接收用户输入的字符串
 	      */
 	     Scanner scanner = new Scanner(System.in);
+	     //输出欢迎用于
+	     System.out.println("欢迎来到四哥的聊天室");
+	     while(true){
+			     /*
+			      * 首先输入昵称
+			      */
+			     System.out.println("请输入昵称:");
+			     String nickname = scanner.nextLine();
+			     if(nickname.trim().length()>0){
+			    	 pw.println(nickname);
+			    	 break;
+			     }
+			     System.out.println("昵称不能是空");
+	     }
 	     while(true){
 	    	 String str = scanner.nextLine();
 		     pw.println(str);
