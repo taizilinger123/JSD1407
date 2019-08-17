@@ -1,0 +1,4831 @@
+oracle数据库编程
+day01
+一.导论
+1.什么是数据库
+  1）数据库需要持久保存（磁盘文件）
+  2）数据库（数据库管理系统）是一个软件，安全、可靠、高效的管理数据
+  3）数据库服务器，数据中心
+2.为什么要用数据库
+  用在商业系统软件（互联网系统，企业系统）会涉及到大量的商业数据
+3.oracle简介
+  DB2     1970年
+  oracle  1977年
+      Larry  Ellison  数据库之父
+      scott/tiger
+  Infomix
+  SQLServer
+  MySQL 开源的不是免费的
+  国产数据库：
+  达梦
+  金仓
+4.表和关系型数据库
+  用表来存储数据的数据库管理系统
+5.SQL 通用的关系型数据库的操作语言
+  不同数据库之间SQL有方言
+  NoSQL  Not only SQL 
+6.SQL 中的分类
+  DDL(Data Definition Language)：数据定义语言
+  create  drop,...
+  DML(Data Manipulation Language):数据操作语言
+  insert,delete,update
+  TCL(Transaction  Control  Language):事务控制语言
+  begin  transaction
+  commit
+  rollback
+  DQL(Data Query Language):数据查询语言
+  select
+  DCL(Data Control Language):数据控制语言
+  grant
+  revoke 取消授权
+  二.使用Oracle
+1.安装Oracle(DBA)--->
+  创建库(DBA)--->
+  创建用户(DBA)-->
+  登入数据库(SE)--->
+  访问数据库(SE)
+  
+2.我们实验Oracle
+  192.168.0.20:1521:tarena
+  192.168.0.23:1521:tarena10g
+  192.168.0.26:1521:tarena
+  openlab/open123
+3.如何访问
+  1)直接在服务器终端
+  2)远程登录到服务器(命令行)
+  3)使用客户端软件去访问数据库
+ oracle day01
+三.SQL初步
+1.DDL
+1)create语句创建表
+  制定表的名字，表有几列，列名，每个
+  列的类型
+  常见的类型：
+  number(n)n位整数
+  number(m,n)m位有效数字，n位小数
+  varchar2(n)长度小于等于n的字符串
+  date  
+  
+create  table  emp(
+   id number(3),
+   name varchar2(50),
+   hire_date  date,
+   salary  number(8,2) 
+   );     
+2)drop语句删表
+  drop   table  emp;
+3)desc 查看表的结构(只能看到表的结构，不能看到数据)
+  desc  emp;
+  
+2.DML
+1)用insert给表添加行
+  insert into 表名
+  (列名1，列名2，...)
+  values
+  (数据1,数据2，...);
+  
+  insert  into  emp  
+  (id,name,hire_date,salary)
+  values
+  (101,'goodman',to_date('2013-10-10','yyyy-mm-dd'),15000.50);  
+  
+    insert  into  emp  
+    values
+    (,,,) 
+1.列名和数据对应，而且数据要符合列类型的规定
+2.没有插入的列值可以为null
+3.字符串常量用''
+4.日期问题
+  oracle有默认的日期格式
+  在插入日期时必须符合这个格式
+  在插入时要么用默认格式
+  要么用to_date函数转换为默认格式
+
+to_date函数的函数用法如下：	
+对于日期可以使用to_date函数
+参数1 按照自己定义的格式写日期	
+参数2 指明自定义格式
+to_date('2013-10-10','yyyy-mm-dd')
+该函数按照参数2定义的格式将参数1装换为oracle的默认日期格式
+insert  into  emp(...)
+values(..,..,'13-10月-10',...);
+insert  into  emp(...)
+values(..,..,to_date('2013-10-10','yyyy-mm-dd'),...);
+
+
+
+2）update修改表中的某些行
+update 表名 set 列1=新值1，列2=新值2,...
+where 条件
+where 子句的作用是筛选要操作的行
+
+update emp  
+   set  salary=salary*120/100
+   where  id=101;  
+   没有where全部更改
+   
+3）delete删除表中某些行
+delete  from  表名  where 条件
+没有where全部删除
+
+delete  from  emp where name='goodman';
+
+3.DQL
+from 表名  --表示要查询的表
+where 条件  --表示要筛选的行
+select  列1，列2，...  --表示要选取的列
+
+select  ... from ... where ...
+
+select name,salary
+ from  emp 
+ where  salary>10000;
+
+ select name,salary
+ from  emp;
+ 
+ select * from emp
+ where salary>=10000;
+ 
+注意：对于更改(insert,update,delete)语句需要提交(commit)方可生效
+ 1.SQL
+2.oracle
+3.表，视图，索引，序列，触发器...
+4.plsql
+oracle  Day02
+一.oracle字符操作
+1.char和varchar2的区别
+  varchar  varchar2
+  char是定长， varchar2可变长，指的是存储空间
+  char(20)占用空间数指定  
+  varchar2(20)占用空间数和实际的字符串长度有关
+  create table  foo_1(
+     c1 char(5),
+	 c2 varchar2(5)
+	 );
+  insert into foo_1  values ('abc','abc');
+  select length(c1),length(c2) from foo_1  
+
+2.关于varchar2的中文问题
+  create table foo_2(c1 varchar2(3));
+  insert into foo_2 values('你');
+  select  length(c1) from foo_2; 
+  了解oracle的字符编码
+  select  userenv('language') from foo_2;
+  select USERENV('LANGUAGE') "Language"  FROM dual;#可以看编码
+  desc dual;
+  dummy#伪表
+  select sysdate from dual;
+  utf-8*3=中文
+  gbk*2=中文
+  再设计表的时候要注意  中文的长度*3
+
+3.关于nvarchar2  n=new
+  create table foo_3(c1 nvarchar2(3));  
+  insert into foo_3 values('你好');
+  select  length(c1) from foo_3; 
+  
+4.char和varchar2的最大长度
+  create table foo_4(c1 char(2000));
+  create table foo_5(c1 varchar2(4000));
+5.字符串的连接
+   'abc'||'bcd'
+   drop table foo_6;
+   create  table foo_6(
+     fname varchar2(50),
+     lname varchar2(50)
+   );
+insert into foo_6 values('larry','ellsion');
+select fname || '.' || lname from foo_6;
+  select  userenv('language') from foo_6;###能看到数据库的字符编码
+用concat函数也可以连接：
+concat(fname,lname) 
+
+6.一组常用函数
+trim    去前后空格
+ltrim   去左边空格
+rtrim   去右边空格
+lpad    左边填充字符至指定长度
+rpad    右边边填充字符至指定长度
+lower   变成小写
+upper   变成大写
+initcap 首字母大写
+length  取字符串长度
+substr  取子字符串
+instr     查找字符串
+drop  table  foo_7;
+create table foo_7(c1 varchar2(50));
+insert into foo_7 values
+('  db2oracleinformixsqlservermysql  ');
+一定要提交
+select trim(c1) from foo_7;
+lpad(str,填充至的长度，[填充的字符,默认空格])
+select lpad(trim(c1),50,'*')  from  foo_7;
+select rpad(trim(c1),50,'*')  from  foo_7;
+
+substr(string,起始位置[,子串的长度])
+起始位置是负数--从后往前数
+create table foo_8(c1 varchar2(50));
+insert into foo_8 values
+('db2oracleinformixsqlservermysql');
+select substr(c1,4,6) from foo_8;
+select substr(c1,4) from foo_8;
+select substr(c1,-5) from foo_8;
+select instr(c1,'o') from foo_8;
+select instr(c1,'o',5) from foo_8;
+select instr(c1,'e',5,2) from foo_8;
+二.oracle日期操作
+1.日期类型
+date        年月日时分秒
+timestamp   年月日时分秒（秒带小数点）
+时间戳
+select sysdate  from dual;
+select systimestamp from dual;
+
+2.to_date,to_char
+select to_date('2013-10-11','yyyy-mm-dd') from  dual;
+select to_char(sysdate,'yyyy-mm-dd') from   dual;
+select to_char(sysdate,'yyyy-mm-dd hh:mi:ss') from   dual;
+select to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') from   dual;
+create table foo_9(d1  date);
+insert into  foo_9
+  values(to_date('2013-10-11 09:30:00','yyyy-mm-dd  hh:mi:ss'));
+insert into  foo_9
+  values(to_date('2013-10-11','yyyy-mm-dd'));
+  select * from foo_9;
+  select to_char(d1,'yyyy-mm-dd  hh24:mi:ss') from foo_9;
+  select * from foo_9;
+  select * from foo_9 where trunc(d1)='11-10月-13';
+  
+3.last_day(date)所在月的最后一天
+  months_between(date1,date2)
+  date1-date2相差的月数
+  least(date1,date2) 
+  date1和date2较早的那一个  
+  greastest(date1,date2)
+  date1和date2较近的那一个  
+  
+  select last_day(sysdate) from dual;
+  create table foo_10(birthday  date);  
+  insert into foo_10  values(to_date('1987-10-31','yyyy-mm-dd'));
+  提交
+  select floor(months_between(sysdate,birthday)/12)  from foo_10; 
+  floor 往小里说
+  ceil  往大里说
+  select * from foo_9;
+  select d1 from foo_9;
+  select to_char(least(d1,to_date('2013-10-11  11:00:00',
+  'yyyy-mm-dd  hh:mi:ss')),'yyyy-mm-dd  hh24:mi:ss') 
+  from foo_9;
+    select to_char(greastest(d1,to_date('2013-10-11  11:00:00',
+  'yyyy-mm-dd  hh:mi:ss')),'yyyy-mm-dd  hh24:mi:ss') 
+  from foo_9;
+  
+4.round(date) 对时分秒进行舍入
+  trunc(date) 把时分秒去掉    过了12点都是明天
+  select to_char(trunc(sysdate),'yyyy-mm-dd  hh24:mi:ss') from dual;
+  select to_char(round(sysdate),'yyyy-mm-dd  hh24:mi:ss') from dual;
+
+5.extract 
+  extract(year from 日期值)
+  extract(month from 日期值)
+  extract(day from 日期值)
+  extract(hour from 日期值)
+  extract(minute from 日期值)
+  extract(second from 日期值)
+  select extract(year from sysdate) from dual;
+  select extract(year from d1) from foo_9;
+二.DDL表
+create  drop  alter
+   
+1.关于null
+create table  goo_1(
+  n1 number(3),
+  c1 varchar2(20)  
+);
+1)null的插入：
+插入是可以指定为null
+insert into goo_1  values(1,'abc');
+insert into goo_1  values(2,'bcd');
+insert into goo_1  values(3,null);
+没有插入的列为null
+insert into goo_1 (n1) values(4);
+提交
+select * from  goo_1;
+
+2）是否为null条件判断
+select * from  goo_1  where  c1 is null;
+select * from  goo_1  where  c1 is not null;
+
+3)空值函数
+nvl(arg1,arg2)
+如果arg1为null,返回arg2
+如果arg1不为null，返回arg1
+select  nvl(c1,'hahaha')  from   goo_1;
+
+类型要一样
+select *  from goo_1;
+insert into goo_1(c1) values(100);
+select nvl(n1,'abc')  from goo_1;
+
+nvl2(arg1,arg2,arg3)
+如果arg1为null,返回arg3
+如果arg1不为null，返回arg2
+select  nvl2(c1,'hehehe','hahaha')  from   goo_1;
+
+4)not null约束 在建表的时候，可以指定某些
+列不能为空
+create table  goo_2(
+  n1 number(3) not null,
+  c1 varchar2(20)  not null  
+);
+insert into goo_2  values(1,null);       error
+insert into goo_2(c1) values('abc');   error  
+
+2.number的舍入
+create table  goo_3(
+  n1 number(5,2),
+  n2 number(5,-1)   
+);
+先舍入，再看长度
+insert into goo_3(n1) values(123.45);
+select * from  goo_3; 对123.45               
+insert into goo_3(n1) values(123.456);
+select n1 from  goo_3;对123.46
+insert into goo_3(n1) values(1234.56); 错
+insert into goo_3(n2) values(123.45);
+select n2 from  goo_3; 对123.45=120 
+insert into goo_3(n2) values(1234.5678);
+select n2 from  goo_3; 对1234.5678=1230
+insert into goo_3(n2) values(123456);
+select n2 from  goo_3;对123456=123460
+123460 = 1.2346 * 10^5
+1234567=1234570（错）
+
+3.主键,数据表中行的唯一性
+
+1)创建主键
+主键也是列(多列--联合主键)，
+一般没有业务含义（不能发生变更），
+唯一标识数据表中的某一行
+必须有主键
+类型最好是number
+
+constraint  主键约束名 primary key(主键列)
+
+create  table  stu(
+   stu_id      number(11),
+   stu_no      number(8),
+   stu_name    varchar2(50),
+   constraint  stu_pk  primary key(stu_id)
+);
+insert into stu  values(100,2013001,'abc');
+select  *  from  stu;
+desc stu;
+truncate table stu;
+2)主键约束  
+主键不能为null
+主键不能重复
+
+4.drop   truncate  delete 
+drop table stu;     删除表，释放空间
+truncate table stu; 保留表的结构，删除数据，释放空间，不能恢复，速度快
+delete from  stu;   删除数据,可以恢复，速度慢
+oracle day03
+5.添加列
+create table goo_11(
+  name varchar2(5)
+);
+insert  into goo_11 values('abc');
+insert  into goo_11 values('bcd');
+alter table  goo_11  add(
+   salary  number(8,2)
+); 
+提交
+select  * from  goo_11;
+desc  goo_11;
+
+alter table  goo_11  add(
+   id number(11)
+); 
+select  *  from  goo_11;
+
+如何增加not  null的列
+1）增加一个可以为空的列
+2）update设置值
+3）将该列改为not  null
+
+6.变更列
+alter table  goo_11  modify(
+   name varchar2(15)  not null
+);
+desc  goo_11;
+
+7.删除列
+alter table goo_11  drop  column  name;
+select  * from  goo_11;
+
+8.根据其他的表创建新表
+select  *  from  s_emp;
+desc s_emp;
+ID                    NOT NULL NUMBER(7)
+LAST_NAME             NOT NULL VARCHAR2(25)
+FIRST_NAME            VARCHAR2(25)
+USERID                VARCHAR2(8)
+START_DATE             DATE 
+COMMENTS              VARCHAR2(255)
+MANAGER_ID            NUMBER(7)
+TITLE                 VARCHAR2(25)
+DEPT_ID               NUMBER(7)
+SALARY                NUMBER(11,2)
+COMMISSION_PCT        NUMBER(4,2)
+
+create table emp_1
+as select id,last_name,first_name,salary  from  s_emp;
+select  *  from  emp_1;
+
+create table emp_2
+as select id,last_name,first_name,salary  from  s_emp where salary>1200;
+select  *  from  emp_2;
+
+create table emp_0
+as select * from  s_emp; 拷贝全部表
+
+create table emp_3
+as select * from  s_emp where 1=2; 只拷贝表的结构
+select  *  from  emp_3;
+创建的表可以复制结构和数据但是不复制约束
+
+四.DQL表
+select  from  where  order by   group by   having
+1.where子句中的>,<,>=,<=,<>,=
+  AND  OR    
+select  first_name ||'.'|| last_name,salary   from  emp_1  where salary>1000  and  salary<=2000;
+select  last_name,salary  from emp_1  where （last_name='a'） OR （'b'='b'）;   ###sql注入
+select  last_name,salary  from emp_1  where  last_name='a' OR 'b'='b';
+2.where子句中的like
+  针对字符串的模糊查询
+  %多个 _一个
+   select  last_name,salary  from emp_1
+     where  last_name like  'C%'; 
+	 
+  select  last_name,salary  from emp_1
+     where  last_name like  '%C%'; 
+
+  select  last_name,salary  from emp_1
+     where  last_name like  '___C%'; 
+
+3.where子句中的between ** and **
+select  last_name,salary  from  emp_1
+where  salary between 1000  and  2000;#包括1000和2000
+
+4.where子句中的in和not in
+select last_name,salary from emp_1
+where  salary  in(1100,1200,1400);
+
+select last_name,salary from emp_1
+where  last_name  in('Biri','Magee','Nozaki');
+
+select last_name,salary from emp_1
+where  last_name  not  in('Biri','Magee','Nozaki');
+
+5.where判断空值is null,is not null
+6.where子句中的子查询
+select  *  from emp_1  
+   where 
+   salary = (select salary  from emp_1  
+         where  last_name='Maduro') 
+	and last_name <>'Maduro';
+
+select  *  from emp_1  
+   where  salary in (select salary  from emp_1  
+         where  last_name in ('Maduro','Biri','Catchpole')) and 
+		   last_name not in('Maduro','Biri','Catchpole'); 
+		   
+7.where子句中可以用函数
+select * from emp_1 
+where length(last_name)>8;
+
+8.select 列的别名
+select查询的结果可以看成是逻辑上的一张表
+select id,first_name name from emp_1; #起别名
+
+9.distinct可以去掉重复的行
+select salary from emp_1;
+select distinct salary  from emp_1;#去掉重复
+
+10.select中可以使用函数
+select first_name||'.'||last_name  name,salary  from emp_1; #起别名
+
+11.聚集函数（聚合函数）
+count  min  max  sum  avg
+对查询出的所有行进行运算
+select  sum(salary)   total_salary,
+        max(salary)   max_salary  from  emp_1;  
+--有奖金人的个数
+select count(commission_pct)  from s_emp;#重复也算
+--行数
+select count(id)  from s_emp;
+select count(*)  from s_emp;
+
+12.order  by对查询的结果可以根据某个（或几个）列进行排序
+select last_name,salary  
+  from emp_1 
+  where  salary>1000
+  order  by salary asc;#升序（默认），不加asc也是升序
+  
+select last_name,salary  
+  from emp_1 
+  where  salary>1000
+  order  by salary desc;#降序
+  
+select last_name,salary  
+  from emp_1  order by length(last_name);
+  
+13.group by 分组
+create table emp_5  
+as select id,last_name  name,title,dept_id,salary from s_emp;
+select *  from emp_5;
+
+select  dept_id,count(id)  from  emp_5  group  by  dept_id; 
+
+select  dept_id,avg(salary),max(salary) from  emp_5 group by dept_id;
+先分组，对组的特征进行查询    
+
+14.having根据条件过滤组
+select  dept_id,count(id)  from  emp_5 
+group  by  dept_id  having  count(id)>2; 
+
+select  dept_id,avg(salary)  avg_salary
+from emp_5  
+  where  salary>1000 
+  group  by  dept_id
+  having  count(id)>1
+  order  by avg_salary;  
+15.decode函数
+decode(value  if1  then1 if2 then2...else)
+如果value=if1 返回 then1 
+否则  如果value=if2 返回 then2
+...
+默认的返回值是else
+
+select id,decode(salary,1200,'一千
+二',1400,'一千四','其他')  from emp_5;
+
+select dept_id, 
+count(decode(title,'Stock  Clerk',1,null)) 
+from  emp_5 
+group  by(dept_id);
+
+select dept_id, count(id) from emp_5 
+where title='Stock  Clerk'
+group by(dept_id);
+
+
+select dept_id,avg(decode(title,'Stock  
+Clerk',salary,null))
+from emp_5
+group by dept_id;
+
+select dept_id,nvl(avg(decode(title,'Stock  
+Clerk',salary,null)),0)
+from emp_5
+group by dept_id;
+16.表的关联
+notepad++
+1、小写转换大写
+Ctrl + shift + U
+2、大写转换小写
+Ctrl + U
+##################################################################
+DROP TABLE EMP;
+DROP TABLE DEPT;
+CREATE TABLE "EMP"("EMPNO" NUMBER(4,0),"ENAME" VARCHAR2(21),"JOB" VARCHAR2(9),"MGR" NUMBER(4,0),"HIREDATE" DATE,"SAL" NUMBER(7,2),"COMM" NUMBER(7,2),"DEPTNO" NUMBER(2,0));
+CREATE TABLE "DEPT"("DEPTNO"  NUMBER(2,0),"DNAME" VARCHAR2(21),"LOC" VARCHAR2(13));
+SELECT * FROM EMP;
+SELECT * FROM DEPT;
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7369,'SMITH','CLERK',7902,TO_DATE('17-12月-80','DD-MON-RR'),800,NULL,20);
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7499,'ALLEN','SALESMAN',7698,TO_DATE('20-2月-81','DD-MON-RR'),1600,300,30);  
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7521,'WARD','SALESMAN',7698,TO_DATE('22-2月-81','DD-MON-RR'),1250,500,30); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7566,'JONES','MANAGER',7839,TO_DATE('02-4月-81','DD-MON-RR'),2975,NULL,20); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7654,'MARTIN','SALESMAN',7698,TO_DATE('28-9月-81','DD-MON-RR'),1250,1400,30); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7698,'BLACK','MANAGER',7839,TO_DATE('01-5月-81','DD-MON-RR'),2850,NULL,30); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7782,'CLARK','MANAGER',7839,TO_DATE('09-6月-81','DD-MON-RR'),2450,NULL,10); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7783,'SCOTT','ANALYST',7566,TO_DATE('19-4月-87','DD-MON-RR'),3000,NULL,20); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7839,'KING','PRESIDENT',NULL,TO_DATE('17-11月-81','DD-MON-RR'),5000,NULL,10); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7844,'TURNER','SALESMAN',7698,TO_DATE('08-9月-81','DD-MON-RR'),1500,0,30); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7876,'ADAMS','CLERK',7788,TO_DATE('23-5月-87','DD-MON-RR'),1100,NULL,20); 
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7900,'JAMES','CLERK',7698,TO_DATE('03-12月-81','DD-MON-RR'),950,NULL,30);
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7902,'FORD','ANALYST',7566,TO_DATE('03-12月-81','DD-MON-RR'),3000,NULL,20);
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7934,'MILLER','CLERK',7782,TO_DATE('23-1月-82','DD-MON-RR'),1300,NULL,10);
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7990,'黄河大侠','CLERK',NULL,TO_DATE('1-1月-87','DD-MON-RR'),1300,NULL,NULL);
+INSERT INTO EMP (EMPNO,ENAME,JOB,MGR,HIREDATE,SAL,COMM,DEPTNO) VALUES (7991,'白发魔女','CLERK',NULL,TO_DATE('1-5月-87','DD-MON-RR'),1100,NULL,NULL);
+
+INSERT INTO DEPT (DEPTNO,DNAME,LOC) VALUES (10,'ACCOUNTING','NEV YORK');
+INSERT INTO DEPT (DEPTNO,DNAME,LOC) VALUES (20,'RESEARCH','DALLAS');
+INSERT INTO DEPT (DEPTNO,DNAME,LOC) VALUES (30,'SALES','CHICAGO');
+INSERT INTO DEPT (DEPTNO,DNAME,LOC) VALUES (40,'OPERATIONS','BOSTON');
+SELECT * FROM EMP,DEPT;
+
+
+1.连接表
+1）笛卡尔积
+create table ta(a varchar2(2));
+create table tb(b varchar2(2));
+
+insert into ta values('a1');
+insert into ta values('a2');
+insert into ta values('a3');
+insert into tb values('b1');
+insert into tb values('b2');
+
+select *  from ta;
+select *  from tb;
+select *  from ta,tb;
+
+select  empno, ename, dname  
+   from emp e,dept d 
+      where  e.deptno=d.deptno;
+	  
+	  
+2)内连接inner join...  on...
+查询所有部门的员工，
+以及他们对应的部门名称
+select ename,dname 
+    from  emp e inner join  dept  d  
+        on  e.deptno=d.deptno;  
+select ename,dname
+   from emp inner join dept 
+      using(deptno);		
+		
+3)外连接
+  a.左外连
+查询所有员工，以及他们对应的部门名称(对应
+还没有部门的写"未分配部门")
+select ename,nvl(dname,'未分配部门') 
+  from  emp  left outer join  dept 
+     using(deptno);
+	 
+  b.右外连
+查询所有部门的名称，以及部门的人数
+按人数降序排列  
+select ename,dname
+  from  emp  right outer join  dept 
+     using(deptno);  
+select dname,count(empno) num
+  from  emp  right outer join  dept 
+     using(deptno) group by dname 
+	    order by num desc;   #降序(从大到小)	 
+  
+  c.全外连
+查询所有部门的名称以及部门的人数
+（没有部门的人，被归到未划分部门）  
+select ename,dname  
+  from  emp  full join dept 
+      using(deptno); 
+select nvl(dname,'未分配部门'),
+   count(empno)  num 
+       from  emp  full join dept 
+       using(deptno) 
+	   group by dname
+	   order by num desc; 	  
+  
+4)自连接
+查询所有有上级的员工的姓名和他上级的姓名
+select e1.ename,e2.ename
+from emp e1 inner join emp e2 
+on e1.mgr=e2.empno;
+查询所有员工的姓名和他上级的姓名(可能没有上级)
+select e1.ename myname,e2.ename  mymgr 
+from emp e1 left outer join emp e2 
+on e1.mgr=e2.empno;
+查询所有员工,以及他们下属的个数
+select e2.ename,count(e1.empno) num
+from emp e1 right outer join emp e2 
+on e1.mgr=e2.empno group by e2.ename
+order by num desc;
+查询所有员工,以及他们有下属的个数
+select e2.ename,count(e1.empno) num
+from emp e1 join emp e2 
+on e1.mgr=e2.empno group by e2.ename
+order by num desc;
+2.子查询
+1)用在where子句中，单行单列子查询
+查询KING的直属下级
+select ename from emp
+where mgr=(select empno from emp
+           where ename='KING');
+也可以用于连接的方式：
+select e1.ename 
+from emp e1 inner join emp e2 
+on e1.mgr = e2.empno 
+where e2.ename='KING';
+
+查询工资大于平均工资的员工姓名和工资
+select ename,sal from emp 
+where sal > (select avg(sal) from emp);
+
+2)用在where子句中，多行单列的子查询
+查询其所属员工名字中含有"S"的部门的名字
+select dname 
+from dept where deptno in  (select deptno
+from emp where ename like '%S%');
+
+3)
+查询工资大于任何一个MANAGERDE的非MANAGER的姓名，职位和工资
+select ename,job,sal 
+from emp
+where sal > ANY(select distinct sal from emp 
+where job='MANAGER') and job<>'MANAGER';
+ANY可以换成ALL，表示大于全部
+distinct去掉重复的
+
+查询所有有下级员工的员工的姓名
+（查询所有的管理者）
+select ename 
+from emp 
+where empno in (select distinct mgr 
+from emp);
+
+select ename 
+from emp e1
+where exists(select 1 from emp e2
+where e2.mgr = e1.empno);
+
+(select 1 from emp e2
+where e2.mgr = e1.empno)的含义就是
+e1是否为管理者
+
+exists用于判断后面的子查询是否有行
+有行 true 
+没有行 false
+day04  oracle
+
+in 
+select ename 
+from emp 
+where empno not in (select distinct mgr
+from emp where mgr is not null);
+--not in的子查询中不能出现null值
+
+exists
+select ename from emp e1 
+where not exists(select 1 from emp e2 
+where e2.mgr=e1.empno);
+
+3 in (1,2,3) true 
+3 in (1,2,null) false 
+5 not in (1,2,3) true 
+5 not in (1,2,null) false
+5 in (1,2,null) false
+
+where子句中，多列
+找出所有部门中工资最低的员工信息
+select ename,job,sal,dname
+from emp  inner join dept using(deptno)  
+where (deptno,sal) in 
+(select deptno,min(sal) from emp where 
+deptno is not null group by deptno);
+using=(on deptno=deptno)
+
+用在having子句中
+查询平均工资最高的部门的编号和平均工资
+select deptno,round(avg(sal)) from emp 
+where deptno is not null group by deptno 
+having avg(sal)=(select max(avg(sal)) 
+from emp group by deptno);  
+round数字四舍五入，日期去掉末尾
+select max(avg(sal)) from emp group by deptno;正确
+select deptno,max(avg(sal)) from emp group by deptno;错误
+分页查询：
+select empno,ename 
+  from emp where rownum<=10;
+
+还能用在from子句中
+把子查询的结果看成一张表
+select empno,ename 
+from  (select empno,ename,rownum n 
+  from emp where rownum<=15)
+where n>10;
+
+select empno,ename,sal 
+from (select empno,ename,sal,rownum n
+from(select * from emp order by sal
+desc)where rownum<=10) where n>5;
+
+mysql:select * from emp limit 2,5
+from where (a,b,c) IN (...)
+
+2)内联视图（Inner View）
+查询job为MANAGER的所有人所属的部门编号和人数
+select ename,job,emp_num from emp 
+join (select deptno d,count(empno)
+emp_num from emp inner join dept using
+(deptno) group by deptno) on deptno=d 
+where job='MANAGER';
+查询job为MANAGER的所有人所属的部门编号，部门名称和人数
+select ename,job,dname,emp_num from emp 
+join (select deptno d,dname,count(empno)
+emp_num from emp inner join dept using
+(deptno) group by deptno,dname) on deptno=d 
+where job='MANAGER';
+注意：group by对多个列分组
+而这两个列都是对部门的唯一标示，不会影响组。
+
+Oracle高级查询
+1.集合运算(SQL)
+create table emp20 as select * from emp where deptno=20;
+select * from  emp20;
+create table emp30 as select * from emp where deptno=30;
+select * from  emp30;
+使用union,union all,intersect,minus
+select * from  emp20 union select * from  emp30;--联合
+select * from  emp20 intersect select * from  emp;--交
+select * from  emp minus select * from  emp30; --减
+select * from  emp union all  select * from  emp30;--可以重复
+
+2.connect by和start with(Oracle  SQL)
+提供一个专门的伪列level
+(列出公司层级架构)
+select level,empno,ename,mgr
+from emp start with ename='KING'
+connect by prior empno=mgr;
+
+select ename from (select level l,empno,ename,mgr
+from emp start with ename='KING'
+connect by prior empno=mgr) where l=2;
+
+3.高级分组函数
+   rollup 函数多一行"小计"
+   对于分组的列为null
+   对于聚集函数为求"小计"
+     select job,sum(sal) from  emp group by job ;
+
+ select job,sum(sal),round(avg(sal)),count(empno),max(sal)
+     from  emp group by  rollup(job);
+#取前面的总计dname
+select dname,job,sum(sal)
+from emp inner join dept using(deptno)
+group by rollup(dname,job) order by dname,job;
+
+#全部取总计(dname,job)
+select dname,job,sum(sal)
+from emp inner join dept using(deptno)
+group by cube(dname,job) order by dname,job;
+grouping 函数
+grouping sets 函数
+
+nvl2(dname,1,0)=grouping(dname)
+
+select grouping(dname),grouping(job),dname,job ,sum(sal) 
+from emp inner join dept using(deptno) 
+group by rollup(dname,job) order by dname,job; 
+
+只查询小计的行
+select dname,job ,sum(sal) from emp 
+inner join dept using(deptno) group by
+grouping sets(dname,job) order by dname,job; 
+
+cube(dname,job)包含grouping sets(dname,job)
+
+如果希望查询的结果只有小计,用grouping sets,因为它的效率要高于
+cube和rollup 
+
+4.排名函数
+select ename,sal from emp order by sal desc;
+select rank() over (order by sal desc) r, ename,sal from emp;
+select dense_rank() over (order by sal desc) r, ename,sal from emp;
+
+5.计算行号
+row_number()  rownum分页查询伪列
+select row_number() over (order by sal desc) num, ename from emp; 
+-----------------------------------------------------------------------------------
+select from (select empno,ename,rownum num from emp
+where rownum<=10) where num >   伪列rownum  num 因为rownum是系统函数所以要取别名就是伪列num
+---------------------------------------------------------------------------------------------
+在工具里面Eclipse 或者MyEclipse里面
+先写个main 然后按一下“Alt+/“, 就会有那个提示出来了,快速打出main方法
+--------------------------------------------------------------------------------------------
+1.什么是JDBC
+JDBC 是Java官方提供的访问数据库的标准
+是一系列接口，这些接口定义了访问数据库的
+通用的方法.由各个数据库厂商提供对JDBC的实现
+
+2.开始使用JDBC
+1）学习JDBC的接口的定义
+2）获取数据库厂商对JDBC的实现（*.jar）
+       打开eclipse
+          1.右击要导入jar包的项目，点properties 
+          2.左边选择java build path,右边选择libraries 
+          3.选择add External jars 
+          4.选择jar包的按照路径下的(ojdbc5.jar)百度云盘盛stone-oracle文件夹里
+          确定后就行了。
+3.不要用JDBC-ODBC桥
+
+4.JDBC API(接口)
+java.sql.Connection
+封装和数据库连接
+java,sql.Statement
+封装SQL语句的执行
+java.sql.ResultSet
+封装DQL执行的结果
+-----------------------------------------------
+TestJDBC
+------------------------------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import oracle.jdbc.OracleDriver;
+
+public class TestJDBC {
+    public static void main(String[] args) throws Exception {
+	  /*装载JDBC的实现*/
+      //把oracle.jdbc.OracleDriver类装载到内存中
+      //该类静态块中的代码会进行Driver的注册
+      Class.forName("oracle.jdbc.OracleDriver");
+      //Class.forName("com.mysql.jdbc.Driver");
+      //Driver driver = new OracleDriver();
+      //DriverManager.registerDriver(driver);
+      
+      /*创建连接*/
+      //调用DriverManager的getConnection方法
+      //该方法返回的是数据库厂商对Connection接口的
+      //实现类的对象(因为DriverManager
+      //已经注册了数据库厂商的Driver信息)
+      
+      //url
+      //1)用于表示数据库的连接信息(ip,port,数据库名称等等)
+      //2)不同的数据库厂商，有特定的url的格式或标识
+      //  DriverManager会根据这个标识来选取不同的驱动信息
+      //  (如果同时注册了多个数据库厂商的实现)
+      //user
+      //password
+      
+      String url = "jdbc:oracle:thin:@192.168.1.4:1521:orcl";
+      //mysql url = "jdbc:mysql://ip:3306/test";
+      Connection con = DriverManager.getConnection(url,"system","a1B12345");
+      System.out.println(con);
+      //执行SQL
+      //Connection的createStatement()
+      //方法用于创建Statement实现类的对象
+      Statement stmt = con.createStatement();
+      //执行DQL语句,返回值是ResultSet
+      //把SQL语句传输给数据库执行
+      //获取数据库传输回的结果数据
+      //并且把这个数据封装成ResultSet对象
+      ResultSet rs = stmt.executeQuery("select empno,ename,sal from emp");
+      //获取结果
+      while(rs.next()){
+    	 String empno = rs.getString("empno");  
+    	 String ename = rs.getString("ename"); 
+    	 String sal = rs.getString("sal"); 
+    	 System.out.println(empno + "," + ename + "," + sal);
+      }
+      //关闭连接
+      con.close();
+  }
+}
+----------------------------------------------------------------------------
+TestClassLoad
+-------------------------------
+package com.tarena.jdbc;
+
+import java.io.EOFException;
+
+public class TestClassLoad {
+	public static void main(String[] args) throws Exception {
+	  //把Foo类装载到内存中（方法区）[会执行静态块]
+	  //创建一个对象（堆）
+	  //Foo foo = new Foo();
+		
+	  //把Foo类装载到内存中（方法区）[会执行静态块]
+	  Class.forName("com.tarena.jdbc.Foo");
+	}
+}
+class Foo{
+  static {
+	System.out.println("Load...");
+  }
+  Foo(){
+	System.out.println("Foo()...");
+  }
+}
+--------------------------------------------------------------------------------------------
+TestDML
+--------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class TestDML {
+	public static void main(String[] args) throws Exception {
+	  Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  Statement stmt = con.createStatement();
+	  //可以执行insert,delete和update等DML语句
+	  //返回的整数表示，刚才的语句所影响的行数
+	  String sql = "update emp set sal=sal*120/100";
+	  //String sql = "delete from emp where ename='Java'";
+	  //String sql = "insert into emp(empno,ename,sal,deptno) values(9999,'java',3500,30)";
+	  int n = stmt.executeUpdate(sql);
+	  System.out.println(n);
+	  con.close();	    
+	}
+}
+-----------------------------------------------------------------------------------------------
+TestPreparedStatement
+---------------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestPreparedStatement {
+  public static void main(String[] args) throws Exception {
+	//输入姓名
+	Scanner sc = new Scanner(System.in);
+	System.out.println("输入姓名:");
+	String name = sc.next();
+	System.out.println(name);
+	
+	//连接数据库执行查询
+	 Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  Statement stmt = con.createStatement();
+	  
+	  String sql = "select empno,ename,sal "+"from emp "+"where ename='"+name+"'";
+	  System.out.println(sql);
+	  
+	  ResultSet rs = stmt.executeQuery(sql);
+	  
+	  while(rs.next()){
+		  System.out.println(rs.getString("empno")+","+rs.getString("ename")+","+rs.getString("sal"));	  
+	  }
+	  
+	  con.close();
+	
+  }
+}
+----------------------------------------------------------------------------------------------------
+package com.tarena.jdbc;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestPreparedStatement {
+  public static void main(String[] args) throws Exception {
+	//输入姓名
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));  
+	//Scanner sc = new Scanner(System.in);
+	System.out.println("输入姓名:");
+	//String name = sc.next();
+	String name = br.readLine();
+	System.out.println(name);
+	
+	//name="a' or 'b'='b";
+	
+	//连接数据库执行查询
+	 Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  Statement stmt = con.createStatement();
+	  
+	  String sql = "select empno,ename,sal "+"from emp "+"where ename='"+name+"'";
+	  System.out.println(sql);
+	  
+	  ResultSet rs = stmt.executeQuery(sql);
+	  
+	  while(rs.next()){
+		      System.out.println(rs.getString("empno")+","+rs.getString("ename")+","+rs.getString("sal"));	  
+	  }  
+	  con.close();	
+  }
+}
+调试输入
+a' or 'b'='b
+------------------------------------------------------------------------------------------------
+TestPreparedStatement(防止SQL注入)
+-----------------------------------
+package com.tarena.jdbc;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestPreparedStatement {
+  public static void main(String[] args) throws Exception {
+	//输入姓名
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));  
+	//Scanner sc = new Scanner(System.in);
+	System.out.println("输入姓名:");
+	//String name = sc.next();
+	String name = br.readLine();
+	System.out.println(name);
+	
+	//name="a' or 'b'='b";
+	
+	//连接数据库执行查询
+	 Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  //Statement stmt = con.createStatement();
+	  PreparedStatement stmt = con.prepareStatement("select empno,ename,sal from emp where ename=?");
+	  
+	  stmt.setString(1, name);
+	  //String sql = "select empno,ename,sal "+"from emp "+"where ename='"+name+"'";
+	  //System.out.println(sql);	  
+	  //ResultSet rs = stmt.executeQuery(sql);
+	  ResultSet rs = stmt.executeQuery();
+	  
+	  while(rs.next()){
+		  System.out.println(rs.getString("empno")+","+rs.getString("ename")+","+rs.getString("sal"));	  
+	  }
+	  
+	  con.close();
+	
+  }
+}
+调试输入
+输入姓名:
+SCOTT
+SCOTT
+7783,SCOTT,3600
+
+输入姓名:
+a' or 'b'='b
+a' or 'b'='b
+--------------------------------------------------------------------------------------------------
+5.PreparedStatement接口(好处2点，1.效率高2.防止SQL注入)
+1）创建连接（一样）
+2）
+Statement:
+----------------
+Statement stmt = con.createStatement();
+PreparedStatement:
+----------------
+PreparedStatement stmt = con.prepareStatement("sql...?,?,?");
+3)
+PreparedStatement:
+stmt.setInt(1,100);
+stmt.setString(2,"abc");
+stmt.setDouble(3,2300);
+
+4)
+Statement:
+stmt.executeQuery(sql);
+PreparedStatement:
+stmt.executeQuery();
+...
+5.PreparedStatement接口
+1）准备PreparedStatement
+PreparedStatement stmt = con.prepareStatement("sql ???")
+2)设置PreparedStatement的参数
+stmt.setXXX(第几个问号，具体的值)
+XXX由？所代表数据的类型来决定
+3）执行SQL，获取ResultSet
+ResultSet rs = stmt.executeQuery();
+int n = stmt.executeUpdate();
+作用：
+1）提高效率
+2）防止SQL Injection
+-----------------------------
+TestInsert
+-----------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
+public class TestInsert {
+  public static void main(String[] args) throws Exception {
+	  Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  
+	  PreparedStatement stmt = 
+	     con.prepareStatement("insert into "+
+	  "emp(empno,ename) values (?,?)");
+	  
+	  for(int i=8000;i<=9000;i++){
+        stmt.setInt(1, i);
+        stmt.setString(2, "name"+i);
+        int n = stmt.executeUpdate();
+        System.out.println("i=" + i+":插入"+n+"行");
+	  }
+	  
+	  con.close();
+  }
+}
+----------------------------------------------------------------------------------------------
+######################################################################
+TestJDBC
+------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import oracle.jdbc.OracleDriver;
+
+public class TestJDBC {
+    public static void main(String[] args) throws Exception {
+	  /*装载JDBC的实现*/
+      //把oracle.jdbc.OracleDriver类装载到内存中
+      //该类静态块中的代码会进行Driver的注册
+      Class.forName("oracle.jdbc.OracleDriver");
+      //Class.forName("com.mysql.jdbc.Driver");
+      //Driver driver = new OracleDriver();
+      //DriverManager.registerDriver(driver);
+      
+      /*创建连接*/
+      //调用DriverManager的getConnection方法
+      //该方法返回的是数据库厂商对Connection接口的
+      //实现类的对象(因为DriverManager
+      //已经注册了数据库厂商的Driver信息)
+      
+      //url
+      //1)用于表示数据库的连接信息(ip,port,数据库名称等等)
+      //2)不同的数据库厂商，有特定的url的格式或标识
+      //  DriverManager会根据这个标识来选取不同的驱动信息
+      //  (如果同时注册了多个数据库厂商的实现)
+      //user
+      //password
+      
+      String url = "jdbc:oracle:thin:@192.168.1.4:1521:orcl";
+      //mysql url = "jdbc:mysql://ip:3306/test";
+      Connection con = DriverManager.getConnection(url,"system","a1B12345");
+      System.out.println(con);
+      //执行SQL
+      //Connection的createStatement()
+      //方法用于创建Statement实现类的对象
+      Statement stmt = con.createStatement();
+      //执行DQL语句,返回值是ResultSet
+      //把SQL语句传输给数据库执行
+      //获取数据库传输回的结果数据
+      //并且把这个数据封装成ResultSet对象
+      ResultSet rs = stmt.executeQuery("select empno,ename,sal,hiredate from emp");
+      //获取结果
+      while(rs.next()){
+    	 String empno = rs.getString("empno");  
+    	 String ename = rs.getString("ename"); 
+    	 String sal = rs.getString("sal"); 
+    	 String hiredate = rs.getString("hiredate");
+    	 System.out.println(empno + "," + ename + "," + sal + "," + hiredate);
+      }
+      //关闭连接
+      con.close();
+ }
+}
+-------------------------------------------------------------------------------------
+TestDML
+------------------------------
+package com.tarena.jdbc;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
+public class TestDML {
+	public static void main(String[] args) throws Exception {
+	  Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  Statement stmt = con.createStatement();
+	  //可以执行insert,delete和update等DML语句
+	  //返回的整数表示，刚才的语句所影响的行数
+	    String sql = "update emp set sal=sal*120/100";
+	  //String sql = "delete from emp where ename='Java'";
+	  //String sql = "insert into emp(empno,ename,sal,deptno) values(9999,'java',3500,30)";
+	  int n = stmt.executeUpdate(sql);
+	  System.out.println(n);
+	  con.close();	    
+	}
+}
+---------------------------------------------------------------------------------------
+TestPreparedStatement
+--------------------------------
+package com.tarena.jdbc;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class TestPreparedStatement {
+  public static void main(String[] args) throws Exception {
+	//输入姓名
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));  
+	//Scanner sc = new Scanner(System.in);
+	System.out.println("输入姓名:");
+	//String name = sc.next();
+	String name = br.readLine();
+	System.out.println(name);
+	
+	//name="a' or 'b'='b";
+	
+	//连接数据库执行查询
+	 Class.forName("oracle.jdbc.OracleDriver");
+	  Connection con = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	  //Statement stmt = con.createStatement();
+	  PreparedStatement stmt = con.prepareStatement("select empno,ename,sal  from emp where ename=?");
+	  
+	  stmt.setString(1, name);
+	  //String sql = "select empno,ename,sal "+"from emp "+"where ename='"+name+"'";
+	  //System.out.println(sql);	  
+	  //ResultSet rs = stmt.executeQuery(sql);
+	  ResultSet rs = stmt.executeQuery();
+	  
+	  while(rs.next()){
+		  System.out.println(rs.getString("empno")+","+rs.getString("ename")+","+rs.getString("sal"));	  
+	  }
+	  
+	  con.close();
+	
+  }
+}
+--------------------------------------------------------------------------------------------
+1.TestInsert
+------------------------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+
+public class TestInsert {
+  public static void main(String[] args) throws Exception {
+	  Connection con = DBUtils.openConnection();
+	  PreparedStatement stmt =  con.prepareStatement("insert into "+
+	  "emp(empno,ename) values (?,?)");
+	  
+	  for(int i=8000;i<=9000;i++){
+        stmt.setInt(1, i);
+        stmt.setString(2, "name"+i);
+        int n = stmt.executeUpdate();
+        System.out.println("i=" + i+":插入"+n+"行");
+	  }
+	  
+	  con.close();
+  }
+}
+-------------------------------------------------------------------------------------------
+2.DBUtils
+------------------------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/jdbc/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  openConnection() throws Exception{
+	  Connection con = DriverManager.getConnection(url,user,password);	  
+	  return con;
+  }
+}
+-------------------------------------------------------------------------------------------------
+5.封装连接工具类
+db.properties
+文本文件  存放的是KEY-VALUE  
+
+先选中下面的代码----右键---Surround With---Try/catch Block
+Properties props = new Properties();
+props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/jdbc/db.properties")
+--------------------------------------------------------------------------------------------------
+3.db.properties
+--------------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+--------------------------------------------------------------------------------------------------
+6.JDBC如何处理日期
+TestDate
+---------------------------------------------------
+package com.tarena.jdbc;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+
+public class TestDate {
+  public static void main(String[] args) throws Exception  {
+	  Connection con = DBUtils.openConnection();
+	  PreparedStatement stmt =  con.prepareStatement("select empno,"
+	  		+ "ename,hiredate from emp");
+	  ResultSet rs = stmt.executeQuery();
+	  
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日"); 
+	  while(rs.next()){
+		String date1 = rs.getString("hiredate");
+		Date date = rs.getDate("hiredate");
+		if(date != null){
+		    String date2 = sdf.format(date);
+		    System.out.println(date1 + "," + date2);
+		}
+		  
+		//System.out.println(rs.getString(1)+","+rs.getString(2)+","+rs.getString(3));  
+	  }
+	  con.close();
+	  
+	  
+//	  PreparedStatement stmt
+//	      =  con.prepareStatement("insert "+
+//	      		 "into emp(empno,ename,hiredate) " +
+//	    		  "values (?,?,?)");
+//	  
+//      stmt.setInt(1, 9000);
+//      stmt.setString(2, "大好人");
+//      stmt.setDate(3, new Date(System.currentTimeMillis()));	  
+//      int n = stmt.executeUpdate();
+//      System.out.println(n);
+//	  con.close();
+  }
+}
+--------------------------------------------------------------------------------------------
+jdbc day02
+1.Batch处理,批量的插入，更新
+stmt.addBatch()
+把刚刚设置好的数据添加批处理缓存
+stmt.executeBatch();
+执行批处理，把缓存的数据一次传送给数据库执行。
+注意：缓存的批处理量受客户端JVM内存限制要指定一个合理的批量值
+sqlplus的oracle里
+select count(*)  from emp;
+desc emp;
+drop table foo;
+create  table foo(
+  id number(11),
+  name varchar2(50)
+)
+select count(*)  from foo;
+delete from foo;
+select count(*)  from foo;
+对于DBUtils和db.properties可以粘贴复制jdbc day01的文件。		
+-----------------------------------------------------------------------
+TestBatch
+-----------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class TestBatch {
+  public static void main(String[] args) throws Exception {
+	Connection con = DBUtils.openConnection();
+	PreparedStatement stmt =  con.prepareStatement("insert into foo (id,name) values(?,?)");
+	  
+	 //批量插入
+	 for(int i=1;i<=900005;i++){
+	   stmt.setInt(1,i);
+	   stmt.setString(2,"name" +i);
+	   stmt.addBatch();//添加批处理
+	   if(i % 10000 == 0){
+		 stmt.executeBatch();//每10000为一批  
+	   }
+	   //stmt.executeUpdate();   
+	 }	
+	 stmt.executeBatch();//执行批处理
+	 con.close();
+  }
+}
+--------------------------------------------------------------
+DBUtils
+-----------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/tts/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  openConnection() throws Exception{
+	  Connection con = DriverManager.getConnection(url,user,password);	  
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = openConnection();	  
+	  System.out.println(con); 	
+  } 	 
+}
+-----------------------------------------------------------------
+db.properties
+----------------------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+-------------------------------------------------------------------------------------
+2.JDBC的事务操作
+1)JDBC中对所有的DML会默认提交
+  在每条DML语句后会默认的加入commit
+con.setAutoCommit(false)
+con.commit();
+con.rollback;
+
+sqlplus的oracle里  
+create table account (
+    id number(11),
+	amount number(18,2)
+);
+
+insert into account  values(100,1000);
+insert into account  values(200,1500);
+提交
+select * from  account;
+---------------------------------------------------
+TestTransaction
+-------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class TestTransaction {
+  public static void main(String[] args) throws Exception {
+	Connection con = null;
+	try {
+	  con = DBUtils.openConnection();
+	//设置自动提交为false,JDBC不会在DML语句执行后加commit
+	con.setAutoCommit(false);
+	
+	PreparedStatement stmt1 =  
+			con.prepareStatement("update account "
+					+ "set amount=amount-500 where id=200");
+	System.out.println("-500");
+	stmt1.executeUpdate();
+	
+	if(1==1){
+	    throw new Exception("专门出的异常");
+	}
+	
+	PreparedStatement stmt2=  
+			con.prepareStatement("update account "
+					+ "set amount=amount+500 where id=100");
+	System.out.println("+500");
+	stmt2.executeUpdate();
+	
+	con.commit();
+	
+	} catch (Exception e) {
+	  System.out.println("rollback");
+	  con.rollback();
+	  e.printStackTrace();	
+	} finally {
+	  if(con != null){
+		  con.close();
+	  }
+	}
+  
+  }
+}
+-----------------------------------------------------------------------------------------------
+3.连接池技术(原理)
+连接池是一个软件
+其功能是管理一系列已经建立好的连接
+使用连接池可以节省连接频繁建立的开销
+一些成熟的连接池还可以根据当时的用户访问量
+动态的改变所管理连接的数目
+当应用了连接池以后
+con.close();
+该方法仅仅是将连接"还"给连接池
+而不是真正的关闭掉
+www.apache.org
+百度apache commons--JDK
+apache commons--DBCP---download----least----Binary---common-dbcp-1.4.jar
+       打开eclipse
+          1.右击要导入jar包的项目，点properties 
+          2.左边选择java build path,右边选择libraries 
+          3.选择add External jars 
+          4.选择jar包的按照路径下的(commons-dbcp-1.4.jar,commons-pool-1.5.6.jar)百度云盘盛stone-oracle文件夹里
+          确定后就行了。	
+---------------------------------------------------------------------------
+TestDBCP
+-------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class TestDBCP {
+  public static void main(String[] args) throws Exception {
+	BasicDataSource ds = new BasicDataSource();
+	
+	ds.setDriverClassName("oracle.jdbc.OracleDriver");
+	ds.setUrl("jdbc:oracle:thin:@192.168.1.4:1521:orcl"); 
+	ds.setUsername("system");
+        ds.setPassword("a1B12345");
+	
+	Connection con = ds.getConnection();
+	System.out.println(con);
+  }
+}
+------------------------------------------------------------------
+public static Connection  getConnection() throws Exception
+选中openConnection----右键---Refacter---Rename---改为getConnection
+则下面的全部类名一样的全部改变（同一个文件里的全部改为一样的了）
+其他的文件要手动也改为getConnection
+*Wrapper
+oracle.jdbc.driver.T4CConnection
+org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+我觉得如果真的很多就ctrl + f 
+[图片]
+
+下面来介绍下如何在myeclipse中解决@override 报错的问题：
+在菜单栏中依次选择：Project –> properties –>Java complier , 在JDK Compliance’下面的complier Compliance level：后面选择6.0或1.6，最后点击OK即可解决。
+本人使用MyEclipse8.6，如图
+[图片]
+ 
+--------------------------------------------------------------------------------------------------------
+public static Connection  getConnection() throws Exception
+选中openConnection----右键---Refacter---Rename---改为getConnection
+则下面的全部类名一样的全部改变（同一个文件里的全部改为一样的了）
+其他的文件要手动也改为getConnection
+*Wrapper
+oracle.jdbc.driver.T4CConnection
+org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+---------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+public class TestBatch {
+  public static void main(String[] args) throws Exception {
+	Connection con = DBUtils.getConnection();
+	PreparedStatement stmt =  con.prepareStatement("insert into foo (id,name) values(?,?)");
+	  
+	 //批量插入
+	 for(int i=1;i<=900005;i++){
+	   stmt.setInt(1,i);
+	   stmt.setString(2,"name" +i);
+	   stmt.addBatch();//添加批处理
+	   if(i % 10000 == 0){
+		 stmt.executeBatch();//每10000为一批  
+		 System.out.println(i);
+	   }
+	   //stmt.executeUpdate();   
+	 }	
+	 stmt.executeBatch();//执行批处理
+	 con.close();
+  }
+}
+-------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+  private static BasicDataSource ds;
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/tts/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		ds = new BasicDataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url); 
+		ds.setUsername(user);
+	    ds.setPassword(password);
+		//Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  getConnection() throws Exception{
+	  //Connection con = DriverManager.getConnection(url,user,password);	  
+	  Connection con = ds.getConnection();
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = getConnection();	  
+	  //System.out.println(con); 	
+	  //输出结果oracle.jdbc.driver.T4CConnection
+	  System.out.println(con.getClass().getName()); 	
+	  //输出结果org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+
+  } 	 
+}
+--------------------------------------------------------------------------------------------
+db.properties文件
+------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+-------------------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class TestTransaction {
+  public static void main(String[] args) throws Exception {
+	Connection con = null;
+	try {
+	  con = DBUtils.getConnection();
+	//设置自动提交为false,JDBC不会在DML语句执行后加commit
+	con.setAutoCommit(false);
+	
+	PreparedStatement stmt1 =  
+			con.prepareStatement("update account "
+					+ "set amount=amount-500 where id=200");
+	System.out.println("-500");
+	stmt1.executeUpdate();
+	
+	if(1==1){
+	    throw new Exception("专门出的异常");
+	}
+	
+	PreparedStatement stmt2=  
+			con.prepareStatement("update account "
+					+ "set amount=amount+500 where id=100");
+	System.out.println("+500");
+	stmt2.executeUpdate();
+	
+	con.commit();
+	
+	} catch (Exception e) {
+	  System.out.println("rollback");
+	  con.rollback();
+	  e.printStackTrace();	
+	} finally {
+	  if(con != null){
+		  con.close();
+	  }
+	}
+  
+  }
+}
+--------------------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class TestDBCP {
+  public static void main(String[] args) throws Exception {
+	BasicDataSource ds = new BasicDataSource();
+	
+	ds.setDriverClassName("oracle.jdbc.OracleDriver");
+	ds.setUrl("jdbc:oracle:thin:@192.168.1.4:1521:orcl"); 
+	ds.setUsername("system");
+    ds.setPassword("a1B12345");
+    
+    ds.setInitialSize(10);//初始时连接的个数
+    ds.setMaxActive(100);//最大活动连接个数
+    ds.setMaxIdle(5);//最大空闲连接个数
+	
+	Connection con = ds.getConnection();
+	System.out.println(con);
+  }
+}
+------------------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+public class TestWrapper {
+  public static void main(String[] args) throws Exception  {
+	Class.forName("oracle.jdbc.OracleDriver");
+	Connection con1 = DriverManager.getConnection("jdbc:oracle:thin:@192.168.1.4:1521:orcl","system","a1B12345");
+	Connection con = new MyWrapper(con1);
+	
+	PreparedStatement stmt 
+	   = con.prepareStatement("select count(*) from foo");
+	
+	con.close();
+ }
+}
+---------------------------------------------------------------------------------------------
+package com.tarena.tts;
+
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
+import java.util.Map;
+import java.util.Properties;
+
+public class MyWrapper implements Connection {
+   private Connection con;
+  
+   public MyWrapper(Connection con){
+	  this.con = con; 
+   }
+	
+	public void close() throws SQLException {	
+	  System.out.println("标记连接可以重新使用（已经还给连接池）"); 
+		
+	}
+	
+	public PreparedStatement prepareStatement(String sql) throws SQLException {
+	  //直接调用内部的连接
+	  return con.prepareStatement(sql);
+	}
+	
+	/*以下方法都这样做*/
+	
+	public boolean isWrapperFor(Class<?> iface) throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public <T> T unwrap(Class<T> iface) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void clearWarnings() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void commit() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public Array createArrayOf(String typeName, Object[] elements)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Blob createBlob() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Clob createClob() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public NClob createNClob() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public SQLXML createSQLXML() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Statement createStatement() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Statement createStatement(int resultSetType, int resultSetConcurrency)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Statement createStatement(int resultSetType,
+			int resultSetConcurrency, int resultSetHoldability)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Struct createStruct(String typeName, Object[] attributes)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public boolean getAutoCommit() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public String getCatalog() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Properties getClientInfo() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public String getClientInfo(String name) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public int getHoldability() throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public DatabaseMetaData getMetaData() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public int getTransactionIsolation() throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	public Map<String, Class<?>> getTypeMap() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public SQLWarning getWarnings() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public boolean isClosed() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public boolean isReadOnly() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public boolean isValid(int timeout) throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	public String nativeSQL(String sql) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public CallableStatement prepareCall(String sql) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public CallableStatement prepareCall(String sql, int resultSetType,
+			int resultSetConcurrency) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public CallableStatement prepareCall(String sql, int resultSetType,
+			int resultSetConcurrency, int resultSetHoldability)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	
+	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public PreparedStatement prepareStatement(String sql, String[] columnNames)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public PreparedStatement prepareStatement(String sql, int resultSetType,
+			int resultSetConcurrency) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public PreparedStatement prepareStatement(String sql, int resultSetType,
+			int resultSetConcurrency, int resultSetHoldability)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void rollback() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void rollback(Savepoint savepoint) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setAutoCommit(boolean autoCommit) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setCatalog(String catalog) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setClientInfo(Properties properties)
+			throws SQLClientInfoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setClientInfo(String name, String value)
+			throws SQLClientInfoException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setHoldability(int holdability) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setReadOnly(boolean readOnly) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public Savepoint setSavepoint() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public Savepoint setSavepoint(String name) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+	public void setTransactionIsolation(int level) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
+--------------------------------------------------------------------------------------------
+4.DAO(Data Access Object)
+企业应用中，专门负责数据库访问的程序
+叫数据访问层
+1）实体类
+和数据表对应类，一般只包含数据和对数据的
+基本访问方法（setter,getter）
+一般情况下：
+一个实体类对应一个表
+一个实体类的对象对应表中的一行数据
+2）DAO类
+负责对数据库的CRUD
+封装所有对数据库的操作
+DAO中有很多方法，每个方法都是对数据库的一种操作
+供其他模块的程序调用
+
+
+3）数据连接工具
+用于封装对数据库连接的获取
+
+属性下面空处--右键---source---Generate Getters and Setters---
+勾选中添加的类--OK就出现set,get方法了。
+导入3个包
+commons-dbcp-1.4.jar
+commons-pool-1.5.6.jar
+ojdbc5.jar
+-----------------------------------------------
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import utils.DBUtils;
+import entity.Dept;
+
+public class DeptDAO {
+  private static final String FIND_ALL= 
+	"select deptno,dname,loc from dept";
+  private static final String FIND_BY_LOCATION= 
+	"select deptno,dname,loc from dept where loc=?";
+  
+  /**
+   * 返回所有部门信息
+   */
+  public List<Dept> findAll() throws Exception {
+	Connection con = null;
+	
+	List<Dept> deptList;
+	try {
+		con = DBUtils.getConnection();
+		PreparedStatement stmt = 
+		   con.prepareStatement(FIND_BY_LOCATION);
+		
+		
+		ResultSet rs = stmt.executeQuery();
+		
+	    deptList = new ArrayList<Dept>();
+		while(rs.next()){
+		  Dept dept = new Dept();
+		  dept.setNo(rs.getInt("deptno"));
+		  dept.setName(rs.getString("dname"));
+		  dept.setLocation(rs.getString("loc"));
+		  
+		  deptList.add(dept);
+		}
+		return deptList;
+	} catch (Exception e) {		
+		e.printStackTrace();
+		// ....
+		throw e;
+	}finally {
+	 if(con != null){
+        con.close();		 
+	  }
+	}
+}
+	
+	/**
+	 * 返回指定地址的所有部门信息
+	 */	
+	public List<Dept> findByLocation(String location) throws Exception {
+		Connection con = null;
+		
+		List<Dept> deptList;
+		try {
+			con = DBUtils.getConnection();
+			PreparedStatement stmt = 
+			   con.prepareStatement(FIND_ALL);
+			
+			stmt.setString(1, location);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+		    deptList = new ArrayList<Dept>();
+			while(rs.next()){
+			  Dept dept = new Dept();
+			  dept.setNo(rs.getInt("deptno"));
+			  dept.setName(rs.getString("dname"));
+			  dept.setLocation(rs.getString("loc"));
+			  
+			  deptList.add(dept);
+			}
+			return deptList;
+		} catch (Exception e) {		
+			e.printStackTrace();
+			// ....
+			throw e;
+		}finally {
+		 if(con != null){
+	        con.close();		 
+		 }
+	}
+  }
+}
+-----------------------------------------------------------
+package entity;
+
+public class Dept {
+	
+  private int no;
+  
+  private String name;
+  
+  private String location;
+
+public int getNo() {
+	return no;
+}
+
+public void setNo(int no) {
+	this.no = no;
+}
+
+public String getName() {
+	return name;
+}
+
+public void setName(String name) {
+	this.name = name;
+}
+
+public String getLocation() {
+	return location;
+}
+
+public void setLocation(String location) {
+	this.location = location;
+}
+   
+}
+---------------------------------------------------------
+package utils;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+  private static BasicDataSource ds;
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("utils/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		ds = new BasicDataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url); 
+		ds.setUsername(user);
+	    ds.setPassword(password);
+		//Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  getConnection() throws Exception{
+	  //Connection con = DriverManager.getConnection(url,user,password);	  
+	  Connection con = ds.getConnection();
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = getConnection();	  
+	  //System.out.println(con); 	
+	  //输出结果oracle.jdbc.driver.T4CConnection
+	  System.out.println(con.getClass().getName()); 	
+	  //输出结果org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+
+  } 	 
+}
+-------------------------------------------------------------
+db.properties
+-----------------------------------------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+--------------------------------------------------------------------------------------------------
+select *  from emp;
+delete from emp  where job is null;
+---------------------------------------------------------------------------
+test测试包
+在test包上右键--new---JUnit Test Case
+window---show View---Outline
+JUnit Test Case 
+JUnit单元测试框架
+Eclipse内嵌了JUnit
+SVN
+--------------------------------------------------------------------
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import utils.DBUtils;
+import entity.Dept;
+
+public class DeptDAO {
+	
+  private static final String FIND_ALL= "select deptno,dname,loc from dept";
+  
+  private static final String FIND_BY_LOCATION= "select deptno,dname,loc from dept where loc=?";
+ 
+  private static final String ADD = "insert into dept(deptno,dname,loc) values(?,?,?)";
+  
+  private static final String UPDATE = "update dept set dname=?,loc=? where deptno=?";
+  
+  private static final String FIND_BY_ID = "select deptno,dname,loc from dept where deptno=?";
+  /**
+   * 返回所有部门信息
+   */
+  public List<Dept> findAll() throws Exception {
+	Connection con = null;
+	
+	List<Dept> deptList;
+	try {
+		con = DBUtils.getConnection();
+		PreparedStatement stmt = 
+		   con.prepareStatement(FIND_ALL);
+		
+		
+		ResultSet rs = stmt.executeQuery();
+		
+	    deptList = new ArrayList<Dept>();
+		while(rs.next()){		
+		  //调用toDept方法	
+		  deptList.add(toDept(rs));
+		}
+		return deptList;
+	} catch (Exception e) {		
+		e.printStackTrace();
+		// ....
+		throw e;
+	} finally {
+	 if(con != null){
+        con.close();		 
+	  }
+	}
+  }
+	/**
+	 * 返回指定地址的所有部门信息
+	 */	
+	public List<Dept> findByLocation(String location) throws Exception {
+		Connection con = null;
+		
+		List<Dept> deptList;
+		try {
+			con = DBUtils.getConnection();
+			PreparedStatement stmt = 
+			   con.prepareStatement(FIND_BY_LOCATION);
+			
+			stmt.setString(1, location);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+		    deptList = new ArrayList<Dept>();
+			while(rs.next()){			  
+			  deptList.add(toDept(rs));
+			}
+			return deptList;
+		} catch (Exception e) {		
+			e.printStackTrace();
+			// ....
+			throw e;
+		}finally {
+		 if(con != null){
+	        con.close();	
+		 }
+		}	
+	 }
+	
+	/**
+	 * 插入部门信息
+	 * @param dept
+	 */
+	public void save(Dept dept) throws Exception {
+	  Connection con = null;
+	  try{
+		con = DBUtils.getConnection();
+		PreparedStatement stmt =  con.prepareStatement(ADD);
+       //设置参数
+	   stmt.setInt(1, dept.getNo());	
+	   stmt.setString(2, dept.getName());
+	   stmt.setString(3, dept.getLocation());
+	   //执行
+	   stmt.executeUpdate();
+	   
+	  }catch(Exception e){
+	   e.printStackTrace();
+	   throw e;
+	  }
+	}
+	
+    /**
+     * 根据dept的id找到dept,
+     * @param dept
+     */
+    public 	void update(Dept dept) throws Exception {
+      Connection con = null;
+   	  try{
+   		con = DBUtils.getConnection();
+   		PreparedStatement stmt =  
+   				con.prepareStatement(UPDATE);
+       //设置参数	
+   	   stmt.setString(1, dept.getName());
+   	   stmt.setString(2, dept.getLocation());
+   	   stmt.setInt(3, dept.getNo());
+   	   //执行
+   	   stmt.executeUpdate();
+   	   
+   	  }catch(Exception e){
+   	   e.printStackTrace();
+   	   throw e;
+   	  }	
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public Dept findById(int deptNo) throws Exception {
+    	Connection con = null;
+       
+    	try {
+    		con = DBUtils.getConnection();
+    		PreparedStatement stmt =  con.prepareStatement(FIND_BY_ID);
+    		stmt.setInt(1, deptNo);
+    		
+    		ResultSet rs = stmt.executeQuery();
+    		
+            if(rs.next()){
+            	return toDept(rs);
+            }else{
+            	return null;
+            }
+       
+    	} catch (Exception e) {		
+    		e.printStackTrace();
+    		// ....
+    		throw e;
+    	} finally {
+    	 if(con != null){
+            con.close();		 
+    	  }
+    	}
+    }
+	
+		/**
+		 * 从结果集中取出数据封装成实体对象
+		 */
+	private Dept toDept(ResultSet rs) throws SQLException {
+		  //创建一个实体对象 
+		  Dept dept = new Dept();
+		  //从结果集中取出数据,set实体对象
+		  dept.setNo(rs.getInt("deptno"));
+		  dept.setName(rs.getString("dname"));
+		  dept.setLocation(rs.getString("loc"));
+		  return dept;		
+	 }
+}
+-----------------------------------------------------------
+package test;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import dao.DeptDAO;
+import entity.Dept;
+
+public class DeptDAOTest {
+ /**
+  * 用于测试DeptDAO的findAll方法	
+  * @throws Exception
+  * ctrl+shift+o
+  */
+  @Test
+  public void testFindAll() throws Exception {
+	DeptDAO deptDAO = new DeptDAO();
+	List<Dept> deptList = deptDAO.findAll();
+	
+	for(Dept dept : deptList){
+	  System.out.println(dept.getNo() + "," + dept.getName() + "," + dept.getLocation());
+	}
+  }
+  
+  /**
+   * 用于测试DeptDAO的findByLocation方法
+   * @throws Exception
+   */
+  @Test
+  public void testFindByLocation() throws Exception {
+		DeptDAO deptDAO = new DeptDAO();
+		List<Dept> deptList = deptDAO.findByLocation("BOSTON");
+		
+		for(Dept dept : deptList){
+		  System.out.println(dept.getNo() + "," + dept.getName() + "," + dept.getLocation());
+	 }  	  
+  }
+  
+  @Test
+  public void testSave() throws Exception  {
+	DeptDAO deptDAO = new DeptDAO();
+	Dept dept = new Dept();
+	dept.setNo(90);
+	dept.setName("开发");
+	dept.setLocation("北京");
+	
+	deptDAO.save(dept);
+  }
+  
+  @Test
+  public void testFindByIdAndUpdate() throws Exception {
+	DeptDAO deptDAO = new DeptDAO();
+	Dept dept = deptDAO.findById(40);
+	System.out.println(dept.getNo()+","+dept.getName()+","+dept.getLocation());
+    dept.setLocation("Beijing");	
+    deptDAO.update(dept);
+    
+  }
+}
+------------------------------------------------------------------------------------------------------
+public class XXXDAO {
+  
+  List<XXX> findXXX(查询的参数){
+      1.获得连接
+	  2.获得PS
+	  3.设置参数
+	  4.执行，获得结果集
+	  5.调用私有方法把结果集的数据
+	    转换成实体对象
+        toXXX(rs); 
+  }
+     XXX  toXXX(ResultSet rs){
+  }
+}
+
+A extends B 就是A继承B的属性和方法，A是子类，B是父类
+
+try...catch...finally....异常完全搞的定用
+throws...Exception....异常解决不了用
+throws...Exception...try...catch...finally....组合时候就是有异常自己想写点东西进去用
+
+泛型<String>
+ArrayList<String> list = new ArrayList<String>();
+list.add()
+
+public class ArrayList<E>{
+  public add(E obj){
+  }
+  ... ... .....
+}
+--------------------------------------------------------------------
+BaseDAO
+-----------------------------
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import utils.DBUtils;
+
+public abstract class BaseDAO<E> {
+  //写一个方法用来封装所有的查询操作
+  //该方法的修饰符可以写成protected,供子类来调用
+  //参数：
+  //1.要执行的SQL语句
+  //2.要设置的参数个数和类型都不确定
+  //返回值：
+  protected List<E> query(String querySQL,Object[] params) throws Exception {
+	 Connection con = null;
+	 try {
+		//获取连接
+		 con = DBUtils.getConnection();
+		 //根据参数querySQL创建PreparedStatement
+		 PreparedStatement stmt = con.prepareStatement(querySQL);
+		 //根据params数组设置参数
+		 if(params != null){
+		   for(int i=0;i<params.length;i++){
+			 //JDBC来判断具体的参数类型
+			 stmt.setObject(i+1,params[i]);
+			 //Oracle参数从1开始
+		   }
+		 }
+		 ResultSet rs = stmt.executeQuery();
+		 List<E> list = new ArrayList<E>();
+		 while(rs.next()){
+			list.add(toEntity(rs));
+		 }	 	 
+		 return list;
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw e;
+	}finally{
+	 if(con != null){
+		con.close(); 
+	 }
+	}
+  }
+  /**
+   * 封装了所有的更改语句
+   * @param updateSQL
+   * @param params
+   * @throws Exception
+   */
+  protected void update(String updateSQL,Object[] params)throws Exception {
+		 Connection con = null;
+		 try {
+			 con = DBUtils.getConnection();
+			 PreparedStatement stmt = con.prepareStatement(updateSQL);
+			 if(params != null){
+			   for(int i=0;i<params.length;i++){
+				 stmt.setObject(i+1,params[i]);
+			   }
+			 }
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally{
+		 if(con != null){
+			con.close(); 
+		 }
+		}  
+  }
+  //不同的子类用不同的方式把结果集中的数据转换成实体对象
+  public abstract E toEntity(ResultSet rs) 
+		  throws Exception;
+}
+-------------------------------------------------------------------------------
+EmpDAO
+---------------------------------
+package dao;
+
+import java.sql.ResultSet;
+import java.util.List;
+
+import entity.Emp;
+
+public class EmpDAO extends BaseDAO<Emp> {
+  private static final String FIND_ALL = "select empno,ename,hiredate,job,sal,mgr from emp";
+  private static final String FIND_BY_JOB = "select empno,ename,hiredate,job,sal,mgr from emp where job=?";
+  
+  public List<Emp> findAll() throws Exception {
+    return query(FIND_ALL,null);
+  }
+  public List<Emp> findByJob(String job) throws Exception {
+	    return query(FIND_BY_JOB,new Object[]{job});
+	  }
+
+@Override
+public Emp toEntity(ResultSet rs) throws Exception {
+	Emp emp = new Emp();
+	emp.setNo(rs.getInt("empno"));
+	emp.setName(rs.getString("ename"));
+	emp.setHireDate(rs.getDate("hiredate"));
+	emp.setJob(rs.getString("job"));
+	emp.setSalary(rs.getBigDecimal("sal"));
+	emp.setManagerNo(rs.getInt("mgr"));
+	return emp;
+ }
+}
+--------------------------------------------------------------------------------------
+DeptDAO
+-------------------------------------
+package dao;
+
+import java.sql.ResultSet;
+import java.util.List;
+
+import entity.Dept;
+
+public class DeptDAO extends BaseDAO<Dept> {
+	
+  private static final String FIND_ALL= "select deptno,dname,loc from dept";
+  
+  private static final String FIND_BY_LOCATION= "select deptno,dname,loc from dept where loc=?";
+ 
+  private static final String SAVE = "insert into dept(deptno,dname,loc) values(?,?,?)";
+  
+  private static final String UPDATE = "update dept set dname=?,loc=? where deptno=?";
+  
+  private static final String FIND_BY_ID = "select deptno,dname,loc from dept where deptno=?";
+  /**
+   * 返回所有部门信息
+   */
+  public List<Dept> findAll() throws Exception {
+	return query(FIND_ALL,null);
+  }
+	/**
+	 * 返回指定地址的所有部门信息
+	 */	
+	public List<Dept> findByLocation(String location) throws Exception {
+	  return query(FIND_BY_LOCATION,new Object[]{location});
+	 }
+	
+	/**
+	 * 插入部门信息
+	 * @param dept
+	 */
+	public void save(Dept dept) throws Exception {
+	  update(SAVE,new Object[]{dept.getNo(),dept.getName(),dept.getLocation()});
+	}
+	
+    /**
+     * 根据dept的id找到dept,
+     * @param dept
+     */
+    public 	void update(Dept dept) throws Exception {
+      update(UPDATE,new Object[]{dept.getName(),dept.getLocation(),dept.getNo()});
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public Dept findById(int deptNo) throws Exception {
+      List<Dept> list = query(FIND_BY_ID,new Object[]{deptNo});
+      if(list.size() != 0){
+    	  return  list.get(0);
+      }else{
+    	  return null;
+      }
+    }
+		@Override
+		public Dept toEntity(ResultSet rs) throws Exception {
+			  //创建一个实体对象 
+			  Dept dept = new Dept();
+			  //从结果集中取出数据,set实体对象
+			  dept.setNo(rs.getInt("deptno"));
+			  dept.setName(rs.getString("dname"));
+			  dept.setLocation(rs.getString("loc"));
+			  return dept;		
+		}
+}
+------------------------------------------------------------------------------------------------
+1.什么是JDBC?
+2.JDBC的核心API
+Connection封装连接
+1）Statement createStatement()
+创建一个Statement对象
+2）PreparedStatement prepareStatement(String sql)
+创建一个PreparedStatement对象,把一个SQL送入数据库服务器预编译
+3）con.close();//关闭连接释放资源
+4）con.setAutoCommit(boolean)
+设置自动提交
+5）commit();rollback();
+Statement 封装SQL语句及其执行
+1）executeQuery(String sql)
+2）executeUpdate(String sql)
+*PreparedStatement
+1）setXXX(int index,XXX value)
+//设置参数，把参数传给数据库端的已经预编译的SQL
+2）setObject(int index,Object value)
+3）ResultSet executeQuery()
+4）int executeUpdate()
+5）void close();
+
+ResultSet 封装DQL执行的结果
+1）boolean next()
+//游标下移一行，返回是否到末尾
+2） XXX getXXX(String columnName)
+//获取游标当前指向行的，指定列的值
+  getXXX表示将数据转换为XXX类型再返回
+
+3.几个解决方案
+1）通用DQL
+//1创建连接
+//2获取PStmt,预编译SQL
+//3设置参数
+//4执行查询
+//5遍历结果集
+//6关闭连接
+2）通用DML
+//1创建连接
+//2获取PStmt,预编译SQL
+//3设置参数
+//4执行DML，可以查看影响的行数  
+3）事务控制
+//1创建连接
+//2设置自动提交为false
+try{
+//3.1 DML语句1
+//3.2 DML语句2
+... ...
+//4提交事务
+}catch(Exception e){
+  ...
+  5回滚事务
+}finally{
+  6关闭连接
+}
+
+4）使用连接池
+a.为什么用连接池？
+  节省连接频繁创建的开销
+  维护一些已经打开连接
+  如果有需要，就提供该连接
+  用完后"还"给连接池
+  连接池会根据访问量来调整连接池中的连接池（可配置）
+b.用过那个连接池，如何配置？
+  Apache  Commons  DBCP
+  BasicDataSource  ds = new BasicDataSource()
+  ds.set...设置连接参数
+  ds.set...设置连接池参数
+  Connection con = ds.getConnection()
+  con.close();//"还"不是"关"
+  //*Wrapper模式
+5）使用批处理
+//1创建连接
+//1.1设置事务自动提交为false
+//2创建PreparedStatement
+for(..;..;..){
+  //3设置参数 stmt.setXXX(...);
+  //4添加批处理stmt.addBatch();
+  //5if(..){//控制"一批"的数量
+        stmt.executeBatch();
+  }
+}
+//6执行批处理stmt.executeBatch();
+//  6.1提交事务
+//7连接关闭
+
+4.会写DAO
+1）编写连接工具(重用)
+   a.一定用连接池
+   b.连接参数写在配置文件中
+2）编写实体类（和数据表对应）
+3）编写BaseDAO(重用)
+4）编写实体DAO extends BaseDAO
+--------------------------------------------------------------------------------------------------------
+myEclipse5.5版本
+-------------------------------------------------
+数据库持久层设计和实现
+1.数据库的设计
+2.数据访问层的实现
+
+一.数据库设计
+1.三范式
+1）列的值唯一，不能有重复的列值（必须遵守）
+名字  联系方式
+XXX   12345...;abc@163.com
+XXX   bcd@163.com 
+XXX   12345;67890;def@163.com 
+
+名字  电话1  电话2  电子邮件
+XXX   12345  67890  def@163.com 
+
+2）属性完全依赖于主键(必须遵守)
+a.必须满足第一范式
+b.必须有主键
+c.其他列必须完全依赖于主键
+编号  姓名  性别  专业  专业课时  校区 
+100   XXX   m     JAVA    600      XXX
+200   XXX   f     JAVA    600      XXX  
+300   XXX   m     CPP     550      XXX
+...   ...   ...
+编号  姓名  性别  专业  专业课时  校区 
+100   XXX   m     JAVA    600      XXX
+200   XXX   f     JAVA    600      XXX  
+300   XXX   m     CPP     550      XXX
+...   ...
+专业编号  专业   专业课时  校区
+10        JAVA    600      XXX
+20        CPP     550      XXX  
+3）属性不依赖于其他非主属性(在特定的场合出于效率的考虑，可以
+有冗余的设计--违反了第三范式)
+a.必须遵守第二范式
+b.去除传递依赖
+编号  姓名  性别   专业编号
+100   XXX   m       10
+200   XXX   f       10      
+300   XXX   m       20    
+...   ...
+专业编号  专业   专业课时  校区
+10        JAVA    600      XXX
+20        CPP     550      XXX  
+
+2.E-R关系（E-R图）
+用PowerDesigner或者visio画图可以转成SQL语句。
+1)仔细阅读系统的需求规约，研究业务需求
+2）设计并绘制E-R关系图
+[图片]
+
+
+[图片]
+3.数据库设计文档
+1）
+ACCOUNT账务账户
+-------------------------
+ID  NUMBER(9)   PK    账务账户ID 
+LOGIN_NAME    VARCHAR2(20) NOT NULL  用户自服务用户名
+LOGIN_PASSWD  VARCHAR2(8)  NOT NULL  用户自服务密码  
+STATUS  CHAR(1) NOT NULL 0:开通，1:暂停，2:删除
+CREATE_DATE DATE   NOT NULL  开通日期
+PAUSE_DATE  DATE   暂停日期
+CLOSE_DATE  DATE   删除日期
+REAL_NAME VARCHAR2(20)  NOT NULL 客户真实姓名
+IDCARD  CHAR(18)  NOT NULL  省份证号
+BIRTHDATE  DATE  NOT NULL   生日
+GENDER  CHAR(1) NOT NULL   性别f:女，m:男
+OCCUPATION  VARCHAR2(50) NULL 职业   
+TELEPHONE  VARCHAR2(50)  NOT NULL 电话 
+EMAIL VARCHAR2(50)  电子邮件
+MAILADDRESS  VARCHAR2(100) NOT NULL 通信地址 
+ZIPCODE CHAR(6) NOT NULL  邮政编码
+QQ  VARCHAR2(15)   QQ号码
+
+2）
+SERVICE
+---------------
+ID  NUMBER(10) PK  主键
+ACCOUNT_ID   NUMBER(9)    FK  NOT   NULL  关联ACCOUNT 
+COST_ID      NUMBER(4)    FK  NOT   NULL 关联COST 
+HOST         VARCHAR2(15) NOT NULL   主机的IP地址
+OS_USERNAME  VARCHAR2(8)  NOT NULL   登录主机的用户名
+OS_PASSWD    VARCHAR2(8)  NOT NULL   登录主机的密码
+STATUS  CHAR(1) NOT NULL  0:开通，1:暂停，2:删除
+CREATE_DATE DATE   NOT NULL  开通日期
+PAUSE_DATE  DATE   暂停日期
+CLOSE_DATE  DATE   删除日期
+3)
+COST 
+---------------
+ID  NUMBER(4)  PK  
+NAME VARCHAR2(50) NOT NULL  
+BASE_DURATION NUMBER(11)  包时长（小时）
+BASE_COST  NUMBER(7，2)   基费（元）
+UNIT_COST  NUMBER(7，2)   单位费用（元/分钟）
+DESCR  VARCHAR2(200)  NOT NULL 资费描述
+COST_TYPE   CHAR(1) NOT NULL  1:包月，2:套餐，3.计时
+CREATE_DATE DATE   NOT NULL  创建日期
+
+4）SERVICE_DETAIL  
+-------------------------
+ID NUMBER(11)  PK  
+SERVICE_ID  NUMBER(10) FK NOT  NULL  关联SERVICE
+
+HOST         VARCHAR2(15) NOT NULL   主机的IP地址
+OS_USERNAME  VARCHAR2(8)  NOT NULL   登录主机的用户名
+OS_PASSWD    VARCHAR2(8)  NOT NULL   登录主机的密码
+
+CLIENT_HOST  VARCHAR2(15) NOT NULL   客户端IP
+PID NUMBER(11) NOT NULL   进程ID
+LOGIN_TIME DATE NOT NULL  登入时刻
+LOGOUT_TIME DATE NOT NULL  登出时刻
+DURATION  NUMBER(20，9) NOT NULL  登录时长
+
+4.创建表的SQL语句
+--账务账户
+--DROP TABLE  ACCOUNT;
+CREATE TABLE ACCOUNT(
+  ID  NUMBER(9),
+  LOGIN_NAME  VARCHAR2(30) NOT NULL, --
+  LOGIN_PASSWD  VARCHAR2(30) NOT NULL, --
+  STATUS CHAR(1)  NOT NULL,--
+  CREATE_DATE DATE NOT NULL,
+  PAUSE_DATE  DATE,
+  CLOSE_DATE  DATE,
+  REAL_NAME VARCHAR2(20) NOT NULL,
+  IDCARD CHAR(18) NOT NULL,
+  BIRTHDATE  DATE,
+  GENDER  CHAR(1)  NOT NULL,
+  OCCUPATION  VARCHAR2(50),
+  TELEPHONE VARCHAR2(15) NOT  NULL,
+  EMAIL VARCHAR2(50),
+  MAILADDRESS VARCHAR2(50),
+  ZIPCODE  CHAR(6),
+  QQ  VARCHAR2(15),
+  CONSTRAINT  PK_ACCOUNT  PRIMARY  KEY(ID)
+);
+
+--DROP SEQUENCE  SEQ_ACCOUNT;
+CREATE SEQUENCE  SEQ_ACCOUNT  START  WITH 100000000 INCREMENT BY  1;
+
+--业务账户
+--DROP TABLE SERVICE  
+CREATE TABLE SERVICE(
+   ID NUMBER(10),
+   ACCOUNT_ID  NUMBER(9)  NOT NULL,
+   COST_ID NUMBER(4)  NOT NULL,
+   UNIX_HOST  VARCHAR2(15)  NOT NULL,
+   OS_USERNAME  VARCHAR2(8) NOT NULL,
+   LOGIN_PASSWD  VARCHAR2(8)  NOT NULL,
+   STATUS  CHAR(1)  NOT NULL,
+   CREATE_DATE   DATE  NOT NULL,
+   PAUSE_DATE  DATE,
+   CLOSE_DATE   DATE,
+   CONSTRAINT  PK_SERVICE  PRIMARY  KEY(ID)
+);
+--DROP  SEQUENCE  SEQ_SERVICE;
+CREATE  SEQUENCE  SEQ_SERVICE  START WITH  1000000000  INCREMENT BY  1;
+
+--资费表
+--DROP  TABLE COST;
+CREATE TABLE COST(
+   ID  NUMBER(4),
+   NAME VARCHAR(50)  NOT NULL,
+   BASE_DURATION  NUMBER(11),
+   BASE_COST  NUMBER(7,2),
+   UNIT_COST  NUMBER(7,4),
+   STATUS  CHAR(1),
+   DESCR  VARCHAR2(100),
+   CREATIME  DATE DEFAULT  SYSDATE,
+   STARTIME  DATE,
+   CONSTRAINT  PK_COST  PRIMARY  KEY(ID)
+
+);
+--DROP SEQUENCE  SEQ_COST;
+CREATE SEQUENCE  SEQ_COST  START WITH 1000  INCREMENT  BY  1;
+
+--业务详单
+--DROP  TABLE SERVICE_DETAIL;
+CREATE TABLE SERVICE_DETAIL(
+  ID  NUMBER(11),
+  SERVICE_ID  NUMBER(10)  NOT  NULL,
+  CLIENT_HOST  VARCHAR2(15)  NOT  NULL,
+  UNIX_HOST    VARCHAR2(15)  NOT  NULL,
+  OS_USERNAME  VARCHAR2(8)   NOT NULL,
+  PID  VARCHAR2(11)  NOT NULL,
+  LOGIN_TIME  DATE  NOT NULL,
+  LOGOUT_TIME  DATE  NOT NULL,
+  DURATION  NUMBER(20,9)  NOT  NULL,
+  COST  NUMBER(20,6)  NOT NULL,
+  CONSTRAINT  PK_SERVICE_DETAIL  PRIMARY  KEY(ID)
+);
+--DROP  SEQUENCE  SEQ_SERVICE_DETAIL;
+CREATE SEQUENCE  SEQ_SERVICE_DETAIL  START WITH 10000000000  INCREMENT  BY  1;
+--------------------------------------------------------------------
+ALTER  SESSION SET NLS_DATE_FORMAT = 'yyyy  mm dd hh24:mi:ss';
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'taiji001','256528',0,'2008  03 15','zhangsanfeng','1943 02  25','410381194302256528',13669351234,0);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'xl18z60','190613',1,'2009 01 10','guojing','1969 03 19','330682196903190613',13338924567,0);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'dgbf70','270429',1,'2009 03 01','huangrong','1971  08 27','330902197108270429',13637811357,1);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'mjjzh64','041115',1,'2010 03 12','zhangwuji','1989 06 04','610121198906041115',13572952468,0);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'jmdxj00','010322',0,'2011 01 01','guofurong','1996 01 01','350581199601010322',18617832562,1);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'ljxj90','310346',0,'2012 02 01','luwushuang','1993 07 31','320211199307310346',13186454984,1);
+
+INSERT  INTO ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,REAL_NAME,BIRTHDATE,IDCARD,TELEPHONE,GENDER)
+VALUES(SEQ_ACCOUNT.NEXTVAL,'kxhxd20','012115',0,'2012 02 20','weixiaobao','2000 10 01','321022200010012115',13953410078,0);
+COMMIT;
+select *  from account;
+
+ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ
+
+loginName,loginPasswd,status,createDate,pauseDate,closeDate,realName,idcard,birthdate,gender,occupation,telephone,email,mailaddress,zipcode,qq
+
+主要业务的操作
+1.新建账务账户并开通业务账号
+2.已有账务账号增加业务账户
+3.系统采集并记录日志信息
+4.月底对某个账务账户进行结算
+5.添加一个资费标准
+
+5.设计DAO
+编写DAO的技巧
+1.实体类
+(1)数据类型的对应关系
+Integer --number(n)n<=10
+Long --number(n) n>10
+BigDecimal   --number(m,n)
+String --varchar2(char)
+java.sql.Date  --date
+(2)最好全使用引用类型，因为要对应数据库里面的null值
+(3)属性的命名
+表(下划线)     实体类(驼峰)  
+CREATE_DATE    createDate
+
+二.Oracle其他对象
+1.序列，Oracle可以通过序列来生成主键
+drop  table foo;
+create table Foo(
+  foo_id number(11),
+  foo_value  varchar2(50),
+  constraint FOO_PK  primary key(foo_id)
+);
+select  max(foo_id)  from  foo; XXX 
+select *  from  foo;
+select *  from  foo  order by  foo_id;
+创建序列DDL
+create  sequence  序列名   [start with 数值]  [increment by 数值]
+删除序列DDL
+drop  sequence  序列名
+例如：
+create  sequence  Seq_Foo  start with 1000  increment by 2 
+delete from  foo;
+提交
+通过伪列
+获取下一个值（序列值会递增）
+nextval
+获取当前值（序列值不会递增）
+currval  
+
+select  seq_foo.nextval  from dual;  //值会递增
+select  seq_foo.currval  from dual;  //当前值不变
+1000-1002-1004-1006
+使用序列值作为主键
+insert  into foo(foo_id,foo_value) values(seq_foo.nextval,?)
+--------------------------------------------------------
+[图片]
+--------------------------------------------------------
+package utils;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Properties;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+  private static BasicDataSource ds;
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("utils/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		ds = new BasicDataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url); 
+		ds.setUsername(user);
+	    ds.setPassword(password);
+		//Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  getConnection() throws Exception{
+	  //Connection con = DriverManager.getConnection(url,user,password);	  
+	  Connection con = ds.getConnection();
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = getConnection();	  
+	  //System.out.println(con); 	
+	  //输出结果oracle.jdbc.driver.T4CConnection
+	  System.out.println(con.getClass().getName()); 	
+	  //输出结果org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+
+  } 	 
+}
+------------------------------------------------------------
+db.properties
+----------------------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+------------------------------------------------------------
+package entity;
+
+public class Foo {
+  private  int id;
+  
+  private  String value;
+
+  public int getId() {
+	  return id;
+  }
+
+  public void setId(int id) {
+	  this.id = id;
+  }
+
+  public String getValue() {
+	  return value;
+  }
+
+  public void setValue(String value) {
+	  this.value = value;
+  }
+  
+}
+-------------------------------------------------------------
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import utils.DBUtils;
+import entity.Foo;
+
+public class FooDAO {
+  private static final String SAVE = "insert into foo(foo_id,foo_value) values(seq_foo.nextval,?) ";
+  public void save(Foo foo) throws Exception {
+	Connection con = null;
+	try{
+	   con = DBUtils.getConnection();
+//	   // 先获取foo_id的最大值select  max(foo_id)  from  foo;
+//	  	   
+//	   int id = 0;
+//	   PreparedStatement stmt1 = con.prepareStatement("select  max(foo_id)  from  foo");
+//	   ResultSet  rs = stmt1.executeQuery();
+//	   if(rs.next()){
+//		 id = rs.getInt(1);
+//	   }
+//	   System.out.println("id=" + id);
+	   	   	   
+	   PreparedStatement stmt = con.prepareStatement(SAVE);
+//	   stmt.setInt(1,id+1);
+//	   stmt.setString(2,foo.getValue());
+	   stmt.setString(1,foo.getValue()); 
+	   stmt.executeUpdate();
+		
+	}catch(Exception e){
+	 e.printStackTrace();
+	 throw e;
+	}finally{
+	 if(con != null)
+		con.close();
+	}
+	  
+  }
+}
+------------------------------------------------------------
+package test;
+
+import dao.FooDAO;
+import entity.Foo;
+
+public class FooTest {
+  public static void main(String[] args) throws Exception {
+	FooDAO fooDAO = new FooDAO();
+	Foo foo = new Foo();
+	//foo.setValue("abc");
+	foo.setValue("ABCDE");
+	fooDAO.save(foo);
+ }
+}
+------------------------------------------------------------
+[图片]
+
+[图片]
+
+
+--------------------------------------------------------------------------------------------------------
+AccountDAO.java
+----------------------
+package com.tarena.netctoss.dao;
+
+import java.sql.ResultSet;
+import java.util.List;
+
+import com.tarena.netctoss.entity.Account;
+import com.tarena.netctoss.utils.EntityUtils;
+
+public class AccountDAO extends BaseDAO<Account>{
+	
+	public void save(Account account) throws Exception {
+	  update(ACCOUNT_SAVE, account.toArray());
+	}
+	
+	public List<Account> findAll(int page,int rowsPerPage) throws Exception {
+		int min = (page-1)*rowsPerPage+1;
+		int max = min + rowsPerPage;       
+		return  query(ACCOUNT_FIND_ALL,new Object[]{max,min});	
+	}
+	
+	@Override
+	public Account toEntity(ResultSet rs) throws Exception {	
+		Account account = new Account();
+		//调用fillEntity方法填充Account
+		EntityUtils.fillEntity(rs, account);
+		return account;
+//		account.setId(rs.getInt("ID"));
+//		account.setLoginName(rs.getString("LOGIN_NAME"));
+//		// ....
+//		return null;
+	}
+
+}
+-----------------------------------------------------------------
+BaseDAO.java  
+-------------------------------------------
+package com.tarena.netctoss.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.tarena.netctoss.utils.DBUtils;
+
+public abstract class BaseDAO<E> implements OracleSQL{
+  //写一个方法用来封装所有的查询操作
+  //该方法的修饰符可以写成protected,供子类来调用
+  //参数：
+  //1.要执行的SQL语句
+  //2.要设置的参数个数和类型都不确定
+  //返回值：
+  protected List<E> query(String querySQL,Object[] params) throws Exception {
+	 Connection con = null;
+	 try {
+		//获取连接
+		 con = DBUtils.getConnection();
+		 //根据参数querySQL创建PreparedStatement
+		 PreparedStatement stmt = con.prepareStatement(querySQL);
+		 //根据params数组设置参数
+		 if(params != null){
+		   for(int i=0;i<params.length;i++){
+			 //JDBC来判断具体的参数类型
+			 stmt.setObject(i+1,params[i]);
+			 //Oracle参数从1开始
+		   }
+		 }
+		 ResultSet rs = stmt.executeQuery();
+		 List<E> list = new ArrayList<E>();
+		 while(rs.next()){
+			list.add(toEntity(rs));
+		 }	 	 
+		 return list;
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw e;
+	}finally{
+	 if(con != null){
+		con.close(); 
+	 }
+	}
+  }
+  /**
+   * 封装了所有的更改语句
+   * @param updateSQL
+   * @param params
+   * @throws Exception
+   */
+  protected void update(String updateSQL,Object[] params)throws Exception {
+		 Connection con = null;
+		 try {
+			 con = DBUtils.getConnection();
+			 PreparedStatement stmt = con.prepareStatement(updateSQL);
+			 if(params != null){
+			   for(int i=0;i<params.length;i++){
+				 stmt.setObject(i+1,params[i]);
+			   }
+			 }
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally{
+		 if(con != null){
+			con.close(); 
+		 }
+		}  
+  }
+  //不同的子类用不同的方式把结果集中的数据转换成实体对象
+  public abstract E toEntity(ResultSet rs) 
+		  throws Exception;
+}
+----------------------------------------------------------
+OracleSQL.java 
+--------------------------------
+package com.tarena.netctoss.dao;
+
+public interface OracleSQL {
+  public  static final String ACCOUNT_FIND_ALL
+    ="select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ from (select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ,rownum num from ACCOUNT  where rownum<?) where num>=?";	
+  public  static final String ACCOUNT_SAVE 
+    = "insert into ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ) values(SEQ_ACCOUNT.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+}
+----------------------------------
+Account
+-------------------------
+package com.tarena.netctoss.entity;
+
+import java.sql.Date;
+
+public class  Account{	
+  private  Integer   id;
+  private  String loginName;
+  private  String loginPasswd;
+  private  String status;
+  private  Date  createDate;
+  private  Date  pauseDate;
+  private  Date  closeDate;
+  private  String  realName;
+  private  String  idcard;
+  private  Date   birthdate;
+  private  String gender;
+  private  String occupation;
+  private  String telephone;
+  private  String email;
+  private  String mailaddress;
+  private  String zipcode;
+  private  String qq;
+  
+public Object[] toArray(){
+	return new Object[]{loginName,loginPasswd,status,createDate,pauseDate,
+			closeDate,realName,idcard,birthdate,gender,
+			occupation,telephone,email,mailaddress,zipcode,qq};  
+  }
+public Integer getId() {
+	return id;
+}
+public void setId(Integer  id) {
+	this.id = id;
+}
+public String getLoginName() {
+	return loginName;
+}
+public void setLoginName(String loginName) {
+	this.loginName = loginName;
+}
+public String getLoginPasswd() {
+	return loginPasswd;
+}
+public void setLoginPasswd(String loginPasswd) {
+	this.loginPasswd = loginPasswd;
+}
+public String getStatus() {
+	return status;
+}
+public void setStatus(String status) {
+	this.status = status;
+}
+public Date getCreateDate() {
+	return createDate;
+}
+public void setCreateDate(Date createDate) {
+	this.createDate = createDate;
+}
+public Date getPauseDate() {
+	return pauseDate;
+}
+public void setPauseDate(Date pauseDate) {
+	this.pauseDate = pauseDate;
+}
+public Date getCloseDate() {
+	return closeDate;
+}
+public void setCloseDate(Date closeDate) {
+	this.closeDate = closeDate;
+}
+public String getRealName() {
+	return realName;
+}
+public void setRealName(String realName) {
+	this.realName = realName;
+}
+public String getIdcard() {
+	return idcard;
+}
+public void setIdcard(String idcard) {
+	this.idcard = idcard;
+}
+public Date getBirthday() {
+	return birthdate;
+}
+public void setBirthday(Date birthday) {
+	this.birthdate = birthday;
+}
+public String getGender() {
+	return gender;
+}
+public void setGender(String gender) {
+	this.gender = gender;
+}
+public String getOccupation() {
+	return occupation;
+}
+public void setOccupation(String occupation) {
+	this.occupation = occupation;
+}
+public String getTelephone() {
+	return telephone;
+}
+public void setTelephone(String telephone) {
+	this.telephone = telephone;
+}
+public String getEmail() {
+	return email;
+}
+public void setEmail(String email) {
+	this.email = email;
+}
+public String getMailaddress() {
+	return mailaddress;
+}
+public void setMailaddress(String mailaddress) {
+	this.mailaddress = mailaddress;
+}
+public String getZipcode() {
+	return zipcode;
+}
+public void setZipcode(String zipcode) {
+	this.zipcode = zipcode;
+}
+public String getQq() {
+	return qq;
+}
+public void setQq(String qq) {
+	this.qq = qq;
+}
+
+}
+------------------------------------
+Service.java  
+----------------------------
+package com.tarena.netctoss.entity;
+
+public class Service {
+
+}
+------------------------------------
+AccountDAOTest
+-------------------------------
+package com.tarena.netctoss.test;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import com.tarena.netctoss.dao.AccountDAO;
+import com.tarena.netctoss.entity.Account;
+
+public class AccountDAOTest {
+	@Test
+	public void testFindAll() throws Exception {
+	  AccountDAO accountDAO = new AccountDAO();
+	  List<Account> accountList =  accountDAO.findAll(2, 3);
+      for(Account account : accountList){
+    	System.out.println(account);
+      }	
+	}
+}
+-------------------------------------------
+TestBeanUtils
+----------------------------------
+package com.tarena.netctoss.test;
+
+import org.apache.commons.beanutils.BeanUtils;
+
+import com.tarena.netctoss.entity.Account;
+
+public class TestBeanUtils {
+  public static void main(String[] args) throws Exception  {
+	Account account = new Account();
+	// account.setId(1000);
+	
+	// BeanUtils.setProperty(obj, name, value)
+	// obj给哪个对象设置属性
+	// name要设置的属性名
+	// value要设置的属性值
+	BeanUtils.setProperty(account, "id", 10000); 
+	BeanUtils.setProperty(account, "loginName", null);
+	//在设置日期类型属性的时候，其值不能为null
+	BeanUtils.setProperty(account, "createDate", null);
+	System.out.println(account.getId() + "," + account.getLoginName() + "," + account.getCreateDate());
+  }	
+}
+-------------------------------------------------------
+TestEntity 
+----------------------------------------
+package com.tarena.netctoss.test;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.tarena.netctoss.entity.Account;
+import com.tarena.netctoss.utils.DBUtils;
+
+public class TestEntity {
+  public static void main(String[] args) throws Exception {
+	Connection con = DBUtils.getConnection();
+	PreparedStatement stmt = con.prepareStatement("select * from account");
+    ResultSet rs = stmt.executeQuery();
+    
+    //想办法知道查询的结果里有多少列，列名是什么
+    
+    //返回结果集的元素据，元数据中包含有查询得到的列名，列的类型等信息
+    ResultSetMetaData rsmd = rs.getMetaData();
+//    //getColumnCount()返回一共有多少列
+//    System.out.println(rsmd.getColumnCount());
+//    //getColumnName(int index)获取第index列的列名
+//    System.out.println(rsmd.getColumnName(10));
+  
+    while (rs.next()){
+      Account account = new Account();
+      for(int i=1;i<=rsmd.getColumnCount();i++){
+    	//列名
+        String columnName = rsmd.getColumnName(i);
+        //列值
+        Object columnValue = rs.getObject(columnName);
+        //属性名
+        String propertyName = toCamel(columnName);
+        
+        if (columnValue != null){
+        BeanUtils.setProperty(account, propertyName, columnValue);       
+        }
+      }
+      System.out.println(account);
+    }    
+    con.close();  
+  }
+  
+  /**
+   * 把下划线的命名变成驼峰命名方式
+   * @param name
+   */
+  private static String toCamel(String name){
+	name = name.toLowerCase();
+	String[] arr = name.split("_");
+	String camelName = arr[0];
+	if(arr.length > 1){
+	 for(int i = 1;i<arr.length;i++){
+		 //StringUtils.capitalize(String str)将首字母大写
+		 camelName += StringUtils.capitalize(arr[i]);
+	 }
+	}
+	return camelName;
+  } 
+}
+---------------------------------------------------------
+DBUtils
+-------------------------------
+package com.tarena.netctoss.utils;
+
+import java.sql.Connection;
+import java.util.Properties;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+  private static BasicDataSource ds;
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/netctoss/utils/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		ds = new BasicDataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url); 
+		ds.setUsername(user);
+	    ds.setPassword(password);
+		//Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  getConnection() throws Exception{
+	  //Connection con = DriverManager.getConnection(url,user,password);	  
+	  Connection con = ds.getConnection();
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = getConnection();	  
+	  //System.out.println(con); 	
+	  //输出结果oracle.jdbc.driver.T4CConnection
+	  System.out.println(con.getClass().getName()); 	
+	  //输出结果org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+
+  } 	 
+}
+----------------------------------------------------
+EntityUtils
+-------------------------------------------
+package com.tarena.netctoss.utils;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+
+public class EntityUtils {
+  /**
+   * 把结果集中的数据填充到对象中
+   * @param rs
+   * @param obj
+   */
+  public static void fillEntity(ResultSet rs,Object obj) throws Exception {
+	ResultSetMetaData rsmd = rs.getMetaData();
+	for(int i=1;i <= rsmd.getColumnCount();i++){
+      String columnName = rsmd.getColumnName(i);
+      Object columnValue = rs.getObject(columnName);
+      String propertyName = toCamel(columnName);     
+      if(columnValue != null) {
+      BeanUtils.setProperty(obj, propertyName, columnValue);
+      }
+	}	  
+  }
+  /**
+   * 把下划线的命名变成驼峰命名方式
+   * @param name
+   */
+  private static String toCamel(String name){
+	name = name.toLowerCase();
+	String[] arr = name.split("_");
+	String camelName = arr[0];
+	if(arr.length > 1){
+	 for(int i = 1;i<arr.length;i++){
+		 //StringUtils.capitalize(String str)将首字母大写
+		 camelName += StringUtils.capitalize(arr[i]);
+	 }
+	}
+	return camelName;
+  }  
+}
+---------------------------------------------------------
+db.properties
+--------------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+------------------------------------------------------------------------------------------------
+package com.tarena.netctoss.dao;
+
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.util.List;
+
+import com.tarena.netctoss.entity.Account;
+import com.tarena.netctoss.utils.EntityUtils;
+
+public class AccountDAO extends BaseDAO<Account>{
+	
+	public void save(Account account) throws Exception {
+	  update(ACCOUNT_SAVE, account.toArray());
+	}
+	
+	public List<Account> findAll(int page,int rowsPerPage) throws Exception {
+		int min = (page-1)*rowsPerPage+1;
+		int max = min + rowsPerPage;       
+		return  queryEntity(ACCOUNT_FIND_ALL,new Object[]{max,min});	
+	}
+	
+	public int getTotalPages(int rowsPerPage) throws Exception {
+	  List list = query(ACCOUNT_GET_TOTAL_ROWS,null);	
+	  int totalRows = ((BigDecimal)list.get(0)).intValue();
+	  if(totalRows%rowsPerPage==0){
+		  return totalRows/rowsPerPage;
+	  }else{
+		  return totalRows/rowsPerPage+1; 
+	  }
+	}
+	
+	public Account  findByID(int id) throws Exception {
+	  List<Account> list =  queryEntity(ACCOUNT_FIND_BY_ID, new Object[]{id});
+	  if(list.size()>0){
+		 return list.get(0);  
+	  }else{
+		 return null; 
+	  }
+	}
+	public List<Account> findBy(String idCard,String realName,String loginName,String status) throws Exception {
+      Object[] params = new Object[8];
+      if(idCard!=null){
+    	  params[0] = 1;
+    	  params[1] = "%"+idCard+"%";
+      }else{
+    	  params[0] = 0;
+    	  params[1] = "  ";
+      }
+      if(realName!=null){
+    	  params[2] = 1;
+    	  params[3] = "%"+realName+"%";
+      }else{
+    	  params[2] = 0;
+    	  params[3] = "  ";
+      }
+      if(loginName!=null){
+    	  params[4] = 1;
+    	  params[5] = "%"+loginName+"%";
+      }else{
+    	  params[4] = 0;
+    	  params[5] = "  ";
+      }
+      if(status!=null){
+    	  params[6] = 1;
+    	  params[7] = status;
+      }else{
+    	  params[6] = 0;
+    	  params[7] = "  ";
+      }
+	  return queryEntity(ACCOUNT_FIND_BY,params);
+		
+	}		
+		
+//	public List<Account> findBy(String idCard,String realName,String loginName,String status) throws Exception {
+//	  //先动态生成一个SQL语句
+//	  String querySQL = ACCOUNT_FIND_BY;
+//	  StringBuilder sb = new StringBuilder();
+//	  if(idCard!=null){
+//		  sb.append("IDCARD like '%"+idCard+"%'");
+//	  }
+//	  if(realName!=null){
+//		  if(sb.length()!=0){
+//		    sb.append(" and ");
+//		  }
+//	      sb.append("REAL_NAME like '%"+realName+"%'");
+//	  }
+//	  if(loginName!=null){
+//		  if(sb.length()!=0){
+//		    sb.append(" and ");
+//		  }
+//	      sb.append("Login_NAME like '%"+loginName+"%'");
+//	  }
+//	  if(status!=null){
+//		  if(sb.length()!=0){
+//		    sb.append(" and ");
+//		  }
+//	      sb.append("status='"+status+"'");
+//	  }
+//	  
+//	  if(sb.length() > 0){
+//         querySQL += "where " + sb.toString();		  
+//	  }
+//	  
+//	  System.out.println(querySQL);
+//	  
+//	  return queryEntity(querySQL, null);
+//	}
+	
+	@Override
+	public Account toEntity(ResultSet rs) throws Exception {	
+		Account account = new Account();
+		//调用fillEntity方法填充Account
+		EntityUtils.fillEntity(rs, account);
+		return account;
+//		account.setId(rs.getInt("ID"));
+//		account.setLoginName(rs.getString("LOGIN_NAME"));
+//		// ....
+//		return null;
+	}
+
+}
+---------------------------------------------------------
+package com.tarena.netctoss.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.tarena.netctoss.utils.DBUtils;
+
+public abstract class BaseDAO<E> implements OracleSQL{
+  //写一个方法用来封装所有的查询操作
+  //该方法的修饰符可以写成protected,供子类来调用
+  //参数：
+  //1.要执行的SQL语句
+  //2.要设置的参数个数和类型都不确定
+  //返回值：
+  protected List<E> queryEntity(String querySQL,Object[] params) throws Exception {
+	 Connection con = null;
+	 try {
+		 //获取连接
+		 con = DBUtils.getConnection();
+		 
+		 //调用query1执行查询，返回结果集
+		 ResultSet rs = query1(con, querySQL, params);
+		
+		 //遍历结果集的数据，封装成实体对象返回
+		 List<E> list = new ArrayList<E>();
+		 while(rs.next()){
+			list.add(toEntity(rs));
+		 }	 	 
+		 return list;
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw e;
+	}finally{
+	 if(con != null){
+		con.close(); 
+	 }
+	}
+  }
+  protected List query(String querySQL,Object[] params) throws Exception {
+	  Connection con = null;
+		 try {
+			 //获取连接
+			 con = DBUtils.getConnection();
+			 
+			 //调用query1执行查询，返回结果集
+			 ResultSet rs = query1(con, querySQL, params);
+			
+			 //遍历结果集的数据，封装成普通对象返回
+			 
+			 List list = new ArrayList();
+			 
+		    ResultSetMetaData rsmd =  rs.getMetaData();
+			int count = rsmd.getColumnCount();
+			
+			if(count > 1){
+			 //集合里放对象类型的数组
+			while(rs.next()){
+			 Object[] arr = new Object[count];	
+			 for(int i = 0;i<arr.length;i++){
+				arr[i] = rs.getObject(i+1);
+			 }
+			 list.add(arr);
+		    }	
+			
+		 }else{
+			 //集合里放单个对象	
+			 while(rs.next()){
+			   //ResultSet  getXXX("列名") getXXX(列号)
+			   list.add(rs.getObject(1));	 
+			   }				
+			}
+			 			 
+			 return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally{
+		 if(con != null)
+			con.close(); 
+		 }
+	}
+       
+  
+  
+ /**
+  * 用指定的连接，执行查询，返回结果集
+  * @param con
+  * @param querySQL
+  * @param params
+  * @return
+  * @throws Exception
+  */
+  private ResultSet  query1(Connection con, String querySQL,Object[] params) throws Exception {
+		 //根据参数querySQL创建PreparedStatement
+		 PreparedStatement stmt = con.prepareStatement(querySQL);
+		 //根据params数组设置参数
+		 if(params != null){
+		   for(int i=0;i<params.length;i++){
+			 //JDBC来判断具体的参数类型
+			 stmt.setObject(i+1,params[i]);
+			 //Oracle参数从1开始
+		   }
+		 }
+		 return stmt.executeQuery();
+  }
+  
+  
+  
+  /**
+   * 封装了所有的更改语句
+   * @param updateSQL
+   * @param params
+   * @throws Exception
+   */
+  protected void update(String updateSQL,Object[] params)throws Exception {
+		 Connection con = null;
+		 try {
+			 con = DBUtils.getConnection();
+			 PreparedStatement stmt = con.prepareStatement(updateSQL);
+			 if(params != null){
+			   for(int i=0;i<params.length;i++){
+				 stmt.setObject(i+1,params[i]);
+			   }
+			 }
+			stmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}finally{
+		 if(con != null){
+			con.close(); 
+		 }
+		}  
+  }
+  //不同的子类用不同的方式把结果集中的数据转换成实体对象
+  public abstract E toEntity(ResultSet rs) 
+		  throws Exception;
+}
+----------------------------------------------------------
+package com.tarena.netctoss.dao;
+
+public interface OracleSQL {
+  public  static final String ACCOUNT_FIND_ALL="select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ from (select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ,rownum num from ACCOUNT  where rownum<?) where num>=?";	
+  public  static final String ACCOUNT_SAVE = "insert into ACCOUNT(ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ) values(SEQ_ACCOUNT.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  public  static final String ACCOUNT_GET_TOTAL_ROWS = "select count(*) from ACCOUNT";
+  public  static final String ACCOUNT_FIND_BY_ID = "select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ from ACCOUNT  where ID=?";
+  public  static final String ACCOUNT_FIND_BY = "select ID,LOGIN_NAME,LOGIN_PASSWD,STATUS,CREATE_DATE,PAUSE_DATE,CLOSE_DATE,REAL_NAME,IDCARD,BIRTHDATE,GENDER,OCCUPATION,TELEPHONE,EMAIL,MAILADDRESS,ZIPCODE,QQ from ACCOUNT where (0=? or IDCARD like ?) and (0=? or REAL_NAME like ?) and (0=? or LOGIN_NAME like ?) and (0=? or STATUS=?)";
+  
+}
+----------------------------------------------------------
+package com.tarena.netctoss.entity;
+
+import java.sql.Date;
+
+public class  Account{	
+  private  Integer   id;
+  private  String loginName;
+  private  String loginPasswd;
+  private  String status;
+  private  Date  createDate;
+  private  Date  pauseDate;
+  private  Date  closeDate;
+  private  String  realName;
+  private  String  idcard;
+  private  Date   birthdate;
+  private  String gender;
+  private  String occupation;
+  private  String telephone;
+  private  String email;
+  private  String mailaddress;
+  private  String zipcode;
+  private  String qq;
+  
+public Object[] toArray(){
+	return new Object[]{loginName,loginPasswd,status,createDate,pauseDate,
+			closeDate,realName,idcard,birthdate,gender,
+			occupation,telephone,email,mailaddress,zipcode,qq};  
+  }
+public Integer getId() {
+	return id;
+  }
+public void setId(Integer  id) {
+	this.id = id;
+  }
+public String getLoginName() {
+	return loginName;
+  }
+public void setLoginName(String loginName) {
+	this.loginName = loginName;
+  }
+public String getLoginPasswd() {
+	return loginPasswd;
+  }
+public void setLoginPasswd(String loginPasswd) {
+	this.loginPasswd = loginPasswd;
+  }
+public String getStatus() {
+	return status;
+  }
+public void setStatus(String status) {
+	this.status = status;
+  }
+public Date getCreateDate() {
+	return createDate;
+  }
+public void setCreateDate(Date createDate) {
+	this.createDate = createDate;
+  }
+public Date getPauseDate() {
+	return pauseDate;
+  }
+public void setPauseDate(Date pauseDate) {
+	this.pauseDate = pauseDate;
+  }
+public Date getCloseDate() {
+	return closeDate;
+  }
+public void setCloseDate(Date closeDate) {
+	this.closeDate = closeDate;
+  }
+public String getRealName() {
+	return realName;
+  }
+public void setRealName(String realName) {
+	this.realName = realName;
+  }
+public String getIdcard() {
+	return idcard;
+  }
+public void setIdcard(String idcard) {
+	this.idcard = idcard;
+  }
+public Date getBirthday() {
+	return birthdate;
+  }
+public void setBirthday(Date birthday) {
+	this.birthdate = birthday;
+  }
+public String getGender() {
+	return gender;
+  }
+public void setGender(String gender) {
+	this.gender = gender;
+  }
+public String getOccupation() {
+	return occupation;
+  }
+public void setOccupation(String occupation) {
+	this.occupation = occupation;
+  }
+public String getTelephone() {
+	return telephone;
+  }
+public void setTelephone(String telephone) {
+	this.telephone = telephone;
+  }
+public String getEmail() {
+  	return email;
+  }
+public void setEmail(String email) {
+	this.email = email;
+  }
+public String getMailaddress() {
+	return mailaddress;
+  }
+public void setMailaddress(String mailaddress) {
+	this.mailaddress = mailaddress;
+  }
+public String getZipcode() {
+	return zipcode;
+  }
+public void setZipcode(String zipcode) {
+	this.zipcode = zipcode;
+  }
+public String getQq() {
+	return qq;
+  }
+public void setQq(String qq) {
+	this.qq = qq;
+  }
+  
+}
+----------------------------------------------------
+package com.tarena.netctoss.test;
+
+import java.util.List;
+
+import org.junit.Test;
+
+import com.tarena.netctoss.dao.AccountDAO;
+import com.tarena.netctoss.entity.Account;
+
+public class AccountDAOTest {
+	@Test
+	public void testFindAll() throws Exception {
+	  AccountDAO accountDAO = new AccountDAO();
+	  List<Account> accountList =  accountDAO.findAll(2, 3);
+      for(Account account : accountList){
+    	System.out.println(account);
+      }	
+	}
+	@Test
+	public void testGetTotalPages() throws Exception {
+	  AccountDAO accountDAO = new AccountDAO();
+	  int totalPages = accountDAO.getTotalPages(3);
+	  System.out.println(totalPages);
+	}
+	@Test
+	public void testFindBy() throws Exception {
+	  AccountDAO accountDAO = new AccountDAO();
+	  List<Account> accountList =  accountDAO.findBy("119",null,"j","0");
+      for(Account account : accountList){
+    	System.out.println(account);
+      }	
+	}
+	
+}
+---------------------------------------------------------
+package com.tarena.netctoss.test;
+
+import java.sql.Date;
+
+import org.apache.commons.beanutils.BeanUtils;
+
+import com.tarena.netctoss.entity.Account;
+
+public class TestBeanUtils {
+  public static void main(String[] args) throws Exception  {
+	Account account = new Account();
+	// account.setId(1000);
+	
+	// BeanUtils.setProperty(obj, name, value)
+	// obj给哪个对象设置属性
+	// name要设置的属性名
+	// value要设置的属性值
+	BeanUtils.setProperty(account, "id", 10000); 
+	BeanUtils.setProperty(account, "loginName", null);
+	//在设置日期类型属性的时候，其值不能为null
+	BeanUtils.setProperty(account, "createDate", null);
+	System.out.println(account.getId() + "," + account.getLoginName() + "," + account.getCreateDate());
+	//System.out.println(account.getId());
+  }	
+}
+-------------------------------------------------
+package com.tarena.netctoss.test;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import com.tarena.netctoss.utils.DBUtils;
+
+public class TestEmp {
+  public static void main(String[] args) throws Exception {
+	Connection con = DBUtils.getConnection();
+	PreparedStatement stmt = con.prepareStatement("select * from emp where (1=? or ename=?) and (1=?  or job=?)");
+    stmt.setInt(1, 0);
+    stmt.setString(2, "SMITH");
+    stmt.setInt(3, 0);
+    stmt.setString(4, "CLERK");
+    
+    ResultSet rs = stmt.executeQuery();
+    while(rs.next()){
+      System.out.println(rs.getString(1) + "," + rs.getString(2) + "," +rs.getString(3));
+    }
+    con.close();
+  
+  }
+}
+------------------------------------------------------
+package com.tarena.netctoss.test;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.tarena.netctoss.entity.Account;
+import com.tarena.netctoss.utils.DBUtils;
+
+public class TestEntity {
+  public static void main(String[] args) throws Exception {
+	Connection con = DBUtils.getConnection();
+	PreparedStatement stmt = con.prepareStatement("select * from account");
+    ResultSet rs = stmt.executeQuery();
+    
+    //想办法知道查询的结果里有多少列，列名是什么
+    
+    //返回结果集的元素据，元数据中包含有查询得到的列名，列的类型等信息
+    ResultSetMetaData rsmd = rs.getMetaData();
+//    //getColumnCount()返回一共有多少列
+//    System.out.println(rsmd.getColumnCount());
+//    //getColumnName(int index)获取第index列的列名
+//   System.out.println(rsmd.getColumnName(10));
+  
+    while (rs.next()){
+      Account account = new Account();
+      for(int i=1;i<=rsmd.getColumnCount();i++){
+    	//列名
+        String columnName = rsmd.getColumnName(i);
+//        System.out.println(columnName);
+//        System.out.println("               "+ toCamel(columnName));
+        //列值
+        Object columnValue = rs.getObject(columnName);
+        //属性名
+        String propertyName = toCamel(columnName);
+        
+     if (columnValue != null){
+        BeanUtils.setProperty(account, propertyName, columnValue);       
+          }
+       }
+      System.out.println(account);
+     }   
+   
+    con.close();  
+  }
+  
+/**
+ * 把下划线的命名变成驼峰命名方式
+ * @param name
+ * @return
+ */
+  private static String toCamel(String name){
+	name = name.toLowerCase();
+	String[] arr = name.split("_");
+	String camelName = arr[0];
+	if(arr.length > 1){
+	 for(int i = 1;i<arr.length;i++){
+		 //StringUtils.capitalize(String str)将首字母大写
+		 camelName += StringUtils.capitalize(arr[i]);
+	 }
+	}
+	return camelName;
+  } 
+}
+------------------------------------------------------------
+package com.tarena.netctoss.utils;
+
+import java.sql.Connection;
+import java.util.Properties;
+
+import org.apache.commons.dbcp.BasicDataSource;
+
+public class DBUtils {
+  private static String driver;	
+  private static String url;	
+  private static String user;	
+  private static String password;	
+  private static BasicDataSource ds;
+	
+  static {
+    try {
+		Properties props = new Properties();
+		//从类路径中加载文件
+		props.load(DBUtils.class.getClassLoader().getResourceAsStream("com/tarena/netctoss/utils/db.properties"));
+		driver = props.getProperty("driver");
+		url = props.getProperty("url");
+		user = props.getProperty("user");
+		password = props.getProperty("password");
+		
+		ds = new BasicDataSource();
+		ds.setDriverClassName(driver);
+		ds.setUrl(url); 
+		ds.setUsername(user);
+	    ds.setPassword(password);
+		//Class.forName(driver);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw new RuntimeException(e);
+	}
+  }
+	
+  public static Connection  getConnection() throws Exception{
+	  //Connection con = DriverManager.getConnection(url,user,password);	  
+	  Connection con = ds.getConnection();
+	  return con;
+  }
+  public static void main(String[] args)  throws Exception {	  
+	  Connection con = getConnection();	  
+	  //System.out.println(con); 	
+	  //输出结果oracle.jdbc.driver.T4CConnection
+	  System.out.println(con.getClass().getName()); 	
+	  //输出结果org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper
+
+  } 	 
+}
+----------------------------------------------------------
+package com.tarena.netctoss.utils;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
+
+public class EntityUtils {
+  /**
+   * 把结果集中的数据填充到对象中
+   * @param rs
+   * @param obj
+   */
+  public static void fillEntity(ResultSet rs,Object obj) throws Exception {
+	ResultSetMetaData rsmd = rs.getMetaData();
+	for(int i=1;i <= rsmd.getColumnCount();i++){
+      String columnName = rsmd.getColumnName(i);
+      Object columnValue = rs.getObject(columnName);
+      String propertyName = toCamel(columnName);     
+      if(columnValue != null) {
+      BeanUtils.setProperty(obj, propertyName, columnValue);
+      }
+	}	  
+  }
+  /**
+   * 把下划线的命名变成驼峰命名方式
+   * @param name
+   */
+  private static String toCamel(String name){
+	name = name.toLowerCase();
+	String[] arr = name.split("_");
+	String camelName = arr[0];
+	if(arr.length > 1){
+	 for(int i = 1;i<arr.length;i++){
+		 //StringUtils.capitalize(String str)将首字母大写
+		 camelName += StringUtils.capitalize(arr[i]);
+	 }
+	}
+	return camelName;
+  }  
+}
+-----------------------------------------------------------
+db.properties
+---------------------
+driver=oracle.jdbc.OracleDriver
+url=jdbc:oracle:thin:@192.168.1.4:1521:orcl 
+user=system
+password=a1B12345
+-------------------------------------------------------------------------
+三大法宝：索引，视图，存储过程------程序员心里记得三大法宝
+2.索引Index
+1.经常要根据某个列进行查询;
+2.选取的列不超过总数的10%
+为了提升查询效率可以创建索引.
+优势：基于该列的查询效率高
+缺点：空间占用，插入时效率低
+主键默认创建索引
+例如：
+create index  i_account_real_name  on account(real_name)
+
+注意：
+索引和函数
+select id,real_name from  account where upper(real_name)=?
+基于函数的索引
+create index  i_account_real_name_upper  on account(upper(real_name))
+select *  from user_indexes
+
+--可以用来查看所有的索引信息
+select *  from user_indexes
+select *  from user_indexes where table_name='ACCOUNT';
+--可以用来查看所有的表
+select * from  user_tables;
+删除索引
+drop index  i_account_real_name_upper;
+索引和表放在不同的表空间
+
+3.视图(View)
+1)方便权限划分
+2)简化复杂查询
+create view XXX as select ... 
+create table  XXX as select ... 拷贝一个新表
+
+select *  from emp;
+授权
+grant create view to scott;(解决权限不足)
+创建view
+create  view  v_emp_1 as select empno, ename, job from emp;(简单view)
+select * from  v_emp_1;
+insert  into emp(empno,ename,job) values (9999,'ABC','CLERK');
+select * from  v_emp_1;
+select * from  v_emp_1 where job='CLERK';
+create  view  v_emp_sal as select empno, ename, sal from emp where sal>1000;(简单view)
+select * from  v_emp_sal;
+update  v_emp_sal  set sal = 900 where empno = 7499;
+select * from  emp;(改了)
+select * from  v_emp_sal; （没了）被>1000的踢出去了。
+insert into v_emp_sal values(6543,'Hello',800);
+select * from  emp;(改了)
+select * from  v_emp_sal;（没了）被>1000的踢出去了。
+//可以检查数据是否可以通过该视图插入(是否符合该视图的查询条件)with check option constraint +名字
+create  view  v_emp_sal_1 as select empno, ename, sal from emp where sal>1000 with check option constraint check_v_emp_sal_1;(简单view)
+select * from  v_emp_sal_1;
+insert into v_emp_sal_1 values(1234,'JAVA',900);(会报错，因为视图有约束了)
+insert into v_emp_sal_1 values(1234,'JAVA',2000);（可以插入）
+select *  from emp;
+select * from  v_emp_sal_1;（2000的就在第一行查到了） 
+//只读视图，只能DQL
+create  view  v_emp_sal_2 as select empno, ename, sal from emp where sal>1000 with read only constraint check_v_emp_sal_2;(简单view)
+select * from  v_emp_sal_2;
+insert into v_emp_sal_2 values(9876,'CPP',1500);(会报错，因为视图有约束了只读)
+insert into emp(empno,ename,sal) values(9876,'CPP',1500); 原表可以插入
+select * from  v_emp_sal_2;（新的数据就有了）
+
+删除视图
+drop  view  v_emp_1;
+
+对view的操作
+DQL(ok)
+select * from  v_emp_1;
+DML(对简单视图OK)实际上是对BASE Table的DML
+insert into  v_emp_1  values(8888,'hahaha','clerk');
+
+select * from  v_emp_1;
+select * from  emp;
+delete from v_emp_1 where empno=9999;
+select * from  emp;
+
+create view v_emp_dept as select empno,ename,dname from emp inner join dept using(deptno);(复杂view)
+select * from  v_emp_dept;
+insert into  v_emp_dept values(6666,'ABC','SALES'); （会报错）
+create  view v_emp_num as select deptno, count(empno) emp_num  from emp where deptno is not null  group by deptno;(复杂view)
+select * from  v_emp_num;
+insert into  v_emp_num values(40,7); （会报错）
+4.约束
+1)外键约束(先建外键表，再建主键表)
+create table DEPT_1 (
+   id  number(4),
+   name varchar2(30) not null,
+   constraint  PK_DEPT1  primary  key(id)
+);
+
+drop table emp_1;
+create table EMP_1 (
+   id  number(11),
+   name varchar2(20) not null,
+   sal number(12,2) not null,
+   deptId number(4),
+   constraint  PK_EMP1 primary  key(id),
+   constraint FK_EMP1_DEPT foreign key(deptId) references DEPT_1(id)
+);
+
+desc emp_1;
+desc dept_1;
+
+select * from  dept_1;
+delete   from  dept_1;
+insert into dept_1 values(10, 'R&D'); --提交(F11)
+insert into emp_1 values(100,'abc',10000,10);
+insert into emp_1 values(200,'bcd',15000,20);(报错因为有外键约束)
+有外键关系不一定要加外键约束
+
+对已有表增加外键
+alter table SERVICE  add  constraint FK_SERVICE_ACCOUNT foreign key(ACCOUNT_ID) references  ACCOUNT(ID);
+alter table SERVICE  drop constraint FK_SERVICE_ACCOUNT;(删除外键)
+对于误删除的表用回退（F12）可以回退表,只要删除没有提交(F11)就可以把表里的数据回退，如果提交(F11)以后就不行了。
+select  last_name,first_name from employee where salary<avg(salary);(错误)
+select  last_name,first_name from emp where salary <(select  avg(salary) from employee);
+
+
+select * from titles where notes like '50/%%' escape '/'
+以50%开头
+nvl(a,b)  nvl2(a,b,c)  decode(a,if1,then1,if2,then2,if3,then3,else)
+
+drop  table foo;
+create table foo(
+  id  number(11),
+  name varchar2(50),
+  pass varchar2(50),
+  constraint foo_pk  primary  key(id)
+);
+
+drop  sequence  seq_foo;
+create sequence  seq_foo;  
+
+insert into foo values(seq_foo.nextval,'aaa','111');
+insert into foo values(seq_foo.nextval,'bbb','222');
+insert into foo values(seq_foo.nextval,'ccc','333');
+select * from foo;
+insert into foo select  seq_foo.nextval, name, pass  from foo;(几何级数增长)
+提交
+select * from foo;
+delete from foo where id not in (select min(id) from  foo group by name,pass);
+select num  from  scores  where num like '2006%' group by num having sum(score)>600;
+select c+e+m  from  student s join grade g on(s.id=g.id);  
+
+select distinct stu.id,name ,sex from  stu join score on stu.id=score.sid where score>=90
+
+select * from stu where exists (select 1 from score where sid=stu.id and score>=90)
+
+stu(id,name,sex)
+
+course(id,name)
+
+sc(id,sid,cid)
+
+select stu.name,stu.sex from stu where id in (select stu.id from score group by 
+stu.id having min(score)>=90)
+等同于
+select stu.name,stu.sex from stu where  exists (select 1 from score where 
+sid=stu.id group by stu.id  having min(score)>=90)
+
+
+select stu.name,stu.sex from stu where  exists (select 1 from score where 
+sid=stu.id and score>=90 group by sid  having count(cid)>=3)
+
+select 1 from emp;
+select 1 from emp where sal>2000;
+
+select * from  stu  where exists  
+(select 1 from sc  where sid=stu.id 
+    group by sid having count(cid)=
+(select count(c.id) from course  c))
+等同于
+select * from  stu  where  stu.id in 
+(select sid from sc  group by sid having count(cid)=
+(select count(c.id) from course  c))
+
+update student set score=score+10 where classno=1;
+delete from student where classno=3 and birthday>to_date('1981-5-12','yyy-mm-dd');
+
+select stu.id,stu.name from stu join 
+(select classno c,avg(score) avg_score
+ from stu  group by classno)  on stu.classno=c 
+where stu.score>avg_score
+
+from---where---group by---having---order by----select #很重要
+
+select  ... from 
+(select stu.id,stu.name,rownum num 
+from  stu order by score desc) where num<10;
+
+1)数据库设计
+USER(id,name,passwd,flag可以取(0,1,2,3),lock_time)
+
+select count(*) 
+from USER 
+where name=? and passwd=? 
+and (flag!=3 or  flag=3 and lock_time<=?) 
+
+?----->输入的用户名
+?----->输入的密码加密后
+?----->System.currentMill..()-10*60*1000
+
+select sysdate-hiredate from emp where hiredate is not null;
+select extract(minute from systimestamp) from dual;
+select extract(hour from systimestamp) from dual;
+
+2)主要的操作
+
+select
+count(decode(flag,1,1,null)) 成功笔数,
+sum(decode(flag,1,amt,0)) 成功金额,
+count(decode(flag,2,1,null)) 失败笔数,
+sum(decode(flag,2,amt,0)) 失败金额,
+from  test1  group by  pici;
+
+select d_name,count(book_id) from (select d_id,book_id 
+from  deptmap d join bookmap  b using(a_id) 
+group by d_id,book_id) join depts using(d_id)
+group by d_name;
+
+d_id a_id  book_id
+
+001   101  201
+001   102  201 
+
+002   103  202 
+
+003   104  202
+003   105  203 
+003   105  204
+  
