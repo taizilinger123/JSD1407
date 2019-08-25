@@ -25,13 +25,14 @@ day01
   NoSQL  Not only SQL 
 6.SQL 中的分类
   DDL(Data Definition Language)：数据定义语言
-  create  drop,...
+  create,drop,alter,truncate(数据库对象通常包含表，视图，索引，序列)
   DML(Data Manipulation Language):数据操作语言
-  insert,delete,update
-  TCL(Transaction  Control  Language):事务控制语言
+  insert,delete,update一定会影响表的数据的
+  TCL(Transaction  Control  Language):事务控制语言(用来维护数据一致性的语句)
   begin  transaction
   commit
   rollback
+  savepoint
   DQL(Data Query Language):数据查询语言
   select
   DCL(Data Control Language):数据控制语言
@@ -62,7 +63,8 @@ day01
   常见的类型：
   number(n)n位整数
   number(m,n)m位有效数字，n位小数
-  varchar2(n)长度小于等于n的字符串
+  varchar2(n)长度小于等于n的字符串,是oracle独有的数据类型
+  char(N)N表示占用的字节数,并不是指总共占多少字符,是定长,弊端容易造成空间浪费
   date  
   
 create  table  emp(
