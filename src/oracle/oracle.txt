@@ -1,7 +1,8 @@
+http://how2j.cn/?p=72711
 CREATE TABLE employee(
   id NUMBER(4),
-  name VARCHAR2(20),
-  gender CHAR(1),
+  name VARCHAR2(20) NOT NULL,
+  gender CHAR(1) DEFAULT 'M',
   birth DATE,
   salary NUMBER(6,2),
   job VARCHAR2(30),
@@ -14,3 +15,207 @@ DESC table_name;查看表结构
 删除一张表的语法
 DROP  TABLE table_name;
 DROP TABLE employee;
+
+DEFAULT关键字
+用于为给定的列(字段)设置默认值
+在sql语句中用单引号表示字符串
+数据库中字段无论是什么类型，默认值都是NULL若使用DEFAULT指定了默认值，则使用指定的.
+
+NOT NULL约束
+在创建表的时候可以为列添加非空约束，被约束的列在插入数据时必须给值。此列不允许为空。
+
+修改表名
+RENAME old_name TO new_name;
+需要注意：新的表名不能是数据库中现有的表
+
+修改表：
+为表添加新的字段(列),总是在表的最后一列追加
+ALTER TABLE emp ADD (hiredate DATE DEFAULT sysdate);
+sysdate是一个日期的值，表示当前系统时间。
+
+从表中删除一列
+ALTER TABLE emp DROP (hiredate);
+
+修改表中现有的列
+ALTER TABLE emp MODIFY (job VARCHAR2(40) DEFAULT 'CLERK');
+修改表字段时的注意事项：
+1:尽量不修改字段类型
+2:字段长度尽量不要减少
+3:修改后的字段，只对新插入的数据产生影响，修改字段前的所有数据不影响。
+
+DML操作
+向表中插入数据
+INSERT INTO  table_name (id,name,salary)VALUES(1,'范传奇',1500);
+INSERT INTO  table_name  VALUES(1,'范传奇',22,'男',1500);
+INSERT INTO emp(id,name,salary) VALUES(1,'boss',1500);
+
+INSERT语句是向表中插入数据
+INSERT语句指定的列对应的值会被插入到表中没有列举的列会插入NULL,但是，若该列有设置
+默认值(DEFAULT关键字设置的),那么就插入设置的默认值。
+若某列为NOT NULL,执行INSERT语句时又没有指定该列，那么插入会抛出违反为空约束的异常
+
+执行INSERT语句时，若没有指定插入任何列，那么就是全列插入，注意，给的值顺序必须与表中
+列的顺序完全一致，并且不能忽略任何一个列的值
+
+查询表数据
+SELECT * FROM emp;
+
+事务控制：
+
+COMMIT
+用于提交事务。
+
+ROLLBACK(在insert以后commit之前执行有效)
+用于回滚事务。那么本次事务中所有的增删改操作全部失效。
+
+TO_DATE()函数
+TO_DATE('2009-09-01','YYYY-MM-DD')
+INSERT INTO emp(id,name,birth) VALUES(1,'jack',TO_DATE('1990-09-01','YYYY-MM-DD'));
+
+UPDATE emp SET salary = 8500 WHERE name='jack';
+UPDATE emp SET salary = 6000,job='MANAGER' WHERE name='tom';
+注意：通常情况下，更改表时，要添加WHERE来指定过滤条件，若不指定WHERE则是全表修改通常不会这样做。
+
+select * from emp;
+
+从表中删除数据
+DELETE FROM  emp  WHERE name='tom';
+删除数据时更要注意，添加WHERE,否则是全表删除。
+
+TRUNCATE TABLE emp;不可回退
+
+CREATE TABLE account(
+    id NUMBER(9) NOT NULL,
+    recommender_id NUMBER(9),
+    login_name VARCHAR2(30) NOT NULL,
+    login_passwd VARCHAR2(8) NOT NULL,
+    status CHAR(1),
+    create_date DATE DEFAULT SYSDATE,
+    pause_date DATE,
+    close_date DATE,
+    real_name VARCHAR2(20) NOT NULL,
+    idcard_no CHAR(18) NOT NULL,
+    birthdate DATE,
+    gender CHAR(1) NOT NULL,
+    occupation VARCHAR2(50),
+    telephone VARCHAR2(15) NOT NULL,
+    email VARCHAR2(50),
+    mailaddress VARCHAR2(50),
+    zipcode CHAR(6),
+    qq VARCHAR2(15),
+    last_login_time DATE,
+    last_login_ip VARCHAR2(15)
+)
+
+test09:
+1:RENAME account TO t_account;
+2:ALTER TABLE t_account ADD(bak VARCHAR2(50));
+3:ALTER TABLE t_account MODIFY(bak VARCHAR2(40) DEFAULT 'login');
+4:ALTER TABLE t_account DROP(bak);
+
+test10:
+INSERT INTO t_account(id,login_name,login_passwd,create_date,real_name,idcard_no,telephone)
+VALUES(1,'shiyl','256528',TO_DATE('2008-01-28','yyyy-mm-dd'),'shiyuanli','410381194302256523','13669251234');
+
+Test11:
+UPDATE t_account SET login_passwd='801206' WHERE id=1;
+
+test12:
+DELETE FROM t_account WHERE id=1;
+
+LONG:存储变长字符串
+CLOB:存储定长或变长字符串
+
+||在数据库中是连接字符串，相当于java中的"+"
+注意和java中的"||"区分。
+例如：
+  java中  "hello"+"world" ==> "helloworld"
+  DB中    'hello'||'world' ==> 'helloworld'
+  oracle中  CONCAT('hello','world') ==>'helloworld'
+  
+  'think'||'in'||'java'
+  CONCAT(CONCAT('think','in'),'java')
+
+快速入门SELECT
+
+SELECT *(全列查找) FROM table_name;
+
+SELECT id,name,sal(指定查询表中的某几列)  FROM emp;
+
+CREATE TABLE dept(
+	deptno NUMBER(2),
+	dname VARCHAR2(14) ,
+	loc VARCHAR2(13) ) ;
+
+CREATE TABLE emp(
+	empno NUMBER(4),
+	ename VARCHAR2(10),
+	job VARCHAR2(9),
+	mgr NUMBER(4),
+	hiredate DATE,
+	sal NUMBER(7,2),
+	comm NUMBER(7,2)，
+	deptno NUMBER(2)
+);
+INSERT INTO dept VALUES(10,'ACCOUNTING','NEW YORK');
+INSERT INTO dept VALUES(20,'RESEARCH','DALLAS');
+INSERT INTO dept VALUES(30,'SALES','CHICAGO');
+INSERT INTO dept VALUES(40,'OPERATIONS','BOSTON');
+INSERT INTO emp VALUES(7369,'SMITH','CLERK',7902,to_date('17-12-1980','dd-mm-yyyy'),800,NULL,20);
+INSERT INTO emp VALUES(7499,'ALLEN','SALESMAN',7698,to_date('20-2-1981','dd-mm-yyyy'),1600,300,30);
+INSERT INTO emp VALUES(7521,'WARD','SALESMAN',7698,to_date('22-2-1981','dd-mm-yyyy'),1250,500,30);
+INSERT INTO emp VALUES(7566,'JONES','MANAGER',7839,to_date('2-4-1981','dd-mm-yyyy'),2975,NULL,20);
+INSERT INTO emp VALUES(7654,'MARTIN','SALESMAN',7698,to_date('28-9-1981','dd-mm-yyyy'),1250,1400,30);
+INSERT INTO emp VALUES(7698,'BLAKE','MANAGER',7839,to_date('1-5-1981','dd-mm-yyyy'),2850,NULL,30);
+INSERT INTO emp VALUES(7782,'CLARK','MANAGER',7839,to_date('9-6-1981','dd-mm-yyyy'),2450,NULL,10);
+INSERT INTO emp VALUES(7788,'SCOTT','ANALYST',7566,to_date('19-4-87','dd-mm-yyyy'),3000,NULL,20);
+INSERT INTO emp VALUES(7839,'KING','PRESIDENT',NULL,to_date('17-11-1981','dd-mm-yyyy'),5000,NULL,10);
+INSERT INTO emp VALUES(7844,'TURNER','SALESMAN',7698,to_date('8-9-1981','dd-mm-yyyy'),1500,0,30);
+INSERT INTO emp VALUES(7876,'ADAMS','CLERK',7788,to_date('23-5-87','dd-mm-yyyy'),1100,NULL,20);
+INSERT INTO emp VALUES(7900,'JAMES','CLERK',7698,to_date('3-12-1981','dd-mm-yyyy'),950,NULL,30);
+INSERT INTO emp VALUES(7902,'FORD','ANALYST',7566,to_date('3-12-1981','dd-mm-yyyy'),3000,NULL,20);
+INSERT INTO emp VALUES(7934,'MILLER','CLERK',7782,to_date('23-1-1982','dd-mm-yyyy'),1300,NULL,10);
+
+//只查询三列的值
+SELECT * FROM emp;
+SELECT empno,ename,job FROM emp;
+SELECT 1 FROM emp;
+SELECT 'hello'||'world' FROM DUAL;(虚表)
+DUAL:虚表，没有这么一个表，只为了满足SELECT的语法要求。
+我们常用虚表来测试表达式的结果。
+在数据库中，我们想测试某个表达式的结果只能使用SELECT语句来实现。
+
+什么时候使用虚表：当SELECT语句中没有任何表中的字段参与时。
+SELECT CONCAT('hello','world') FROM DUAL;
+SELECT ename,sal FROM emp;
+SELECT ename||':'||sal FROM emp;
+SELECT CONCAT(CONCAT(ename,':'),sal) FROM emp;
+输出SMITH:8000
+SELECT ename,LENGTH(ename) FROM emp;
+SELECT UPPER('hello world'),LOWER('HELLO WORLD'),INITCAP('hello world') FROM DUAL;
+SELECT UPPER(ename),LOWER(ename),INITCAP(ename) FROM DUAL;
+SELECT TRIM('e' from 'eeeeeliteeeeee') FROM DUAL; 
+参数中from前面只能是单一字符，若没有from以及前面的字符，则是去除空白
+SELECT LTRIM('eeeeeliteeeeee','e') FROM DUAL;
+SELECT RTRIM('eeeeeliteeeeee','e') FROM DUAL; 
+SELECT RTRIM('eeeeeliteeeeee','E') FROM DUAL;字符串是区分大小写的
+同样的，不指定第二个参数，默认是去除空白
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
