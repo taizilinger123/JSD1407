@@ -200,10 +200,20 @@ SELECT LTRIM('eeeeeliteeeeee','e') FROM DUAL;
 SELECT RTRIM('eeeeeliteeeeee','e') FROM DUAL; 
 SELECT RTRIM('eeeeeliteeeeee','E') FROM DUAL;字符串是区分大小写的
 同样的，不指定第二个参数，默认是去除空白
-
-
-
-
+SELECT LPAD('AAA',5,'$') FROM DUAL;
+SELECT LPAD('AAAAAA',5,'$') FROM DUAL;
+SELECT LPAD('aaaaAAAAAA',5,'$') FROM DUAL;
+SELECT RPAD('aaaaAAAAAA',5,'$') FROM DUAL;
+SELECT SUBSTR('Doctor Who travels in TARDIS',8,3) FROM DUAL;//从1开始到第8个W连续取3个Who,oracle是从1开始算
+SELECT SUBSTR('Doctor Who travels in TARDIS',0,6) FROM DUAL;//Doctor
+SELECT SUBSTR('Doctor Who travels in TARDIS',-6,6) FROM DUAL;//TARDIS
+SELECT SUBSTR('Doctor Who travels in TARDIS',-6,0) FROM DUAL;//null
+SELECT SUBSTR('Doctor Who travels in TARDIS',-6,-1) FROM DUAL;//null
+SELECT SUBSTR('Doctor Who travels in TARDIS',1) FROM DUAL;//Doctor Who travels in TARDIS,从1一直取到字符串的末尾
+SELECT INSTR('Doctor Who','Who') as "words" FROM DUAL;//8根java的indexOf一样，返回Who的W在哪个位置
+SELECT INSTR('Doctor Who Who Who','Who', 9) as "words" FROM DUAL;//从第9个位置取Who第一次出现的位置为12
+SELECT INSTR('Doctor Who Who Who','Who', 9,2) as "words" FROM DUAL;//从第9个位置取第二次出现Who的位置为16
+SELECT INSTR('Doctor Who Who Who','Who', 9,3) as "words" FROM DUAL;//没找到返回0,数据库从1开始，java从0开始没找到返回-1.
 
 
 
