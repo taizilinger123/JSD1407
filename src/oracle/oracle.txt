@@ -214,8 +214,23 @@ SELECT INSTR('Doctor Who','Who') as "words" FROM DUAL;//8根java的indexOf一样
 SELECT INSTR('Doctor Who Who Who','Who', 9) as "words" FROM DUAL;//从第9个位置取Who第一次出现的位置为12
 SELECT INSTR('Doctor Who Who Who','Who', 9,2) as "words" FROM DUAL;//从第9个位置取第二次出现Who的位置为16
 SELECT INSTR('Doctor Who Who Who','Who', 9,3) as "words" FROM DUAL;//没找到返回0,数据库从1开始，java从0开始没找到返回-1.
-
-
+SELECT ROUND(45.678, 2) FROM DUAL;--45.68四舍五入oracle里单行注释--
+SELECT ROUND(45.678, 0) FROM DUAL;--46
+SELECT ROUND(45.678, -1) FROM DUAL;--50
+SELECT ROUND(45.678, -2) FROM DUAL;--0，看十位是否大于等于5，大于等于5进位
+SELECT ROUND(55.678, -2) FROM DUAL;--100
+SELECT TRUNC(45.678, 2) FROM DUAL;--45.67
+SELECT TRUNC(45.678, 0) FROM DUAL;--45
+SELECT TRUNC(45.678, -1) FROM DUAL;--40
+SELECT ename,sal, MOD(sal, 1000) FROM emp;
+SELECT CEIL(45.678) FROM DUAL;--46
+SELECT FLOOR(45.678) FROM DUAL;--45
+DATE,TIMESTAMP,SELECT SYSDATE FROM DUAL;
+SELECT SYSTIMESTAMP  FROM DUAL;
+SELECT TO_DATE('2008-08-12 22:45:33','yyyy-mm-dd hh24:mi:ss') FROM DUAL;  //12-8月 -08,将字符串格式的时间转成日期形式
+TO_CHAR()格式字符串中出现汉字需要用双引号。
+SELECT TO_CHAR(sysdate, 'yyyy"年"mm"月"dd"日" hh:mi:ss') FROM DUAL; //将日期时间转换成字符串形式
+SELECT TO_CHAR(sysdate, 'yyyy"year"mm"month"dd"day" hh:mi:ss') FROM DUAL;
 
 
 
