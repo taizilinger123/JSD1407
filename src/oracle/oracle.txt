@@ -231,11 +231,32 @@ SELECT TO_DATE('2008-08-12 22:45:33','yyyy-mm-dd hh24:mi:ss') FROM DUAL;  //12-8
 TO_CHAR()格式字符串中出现汉字需要用双引号。
 SELECT TO_CHAR(sysdate, 'yyyy"年"mm"月"dd"日" hh:mi:ss') FROM DUAL; //将日期时间转换成字符串形式
 SELECT TO_CHAR(sysdate, 'yyyy"year"mm"month"dd"day" hh:mi:ss') FROM DUAL;
-
-
-
-
-
+在日期格式字符串中，出现的非关键字符或符号的其他字符时，需要使用双引号。
+两个日期可以进行减法操作，差为相差的天数。
+SELECT sysdate-hiredate,ename FROM emp;
+SELECT FLOOR(sysdate-hiredate),hiredate,ename FROM emp;
+SELECT LAST_DAY(SYSDATE) FROM DUAL;
+SELECT LAST_DAY('20-2月-09') FROM DUAL;
+SELECT ename,ADD_MONTHS(hiredate, 20*12) as "20周年" FROM emp;
+SELECT ename,FLOOR(MONTHS_BETWEEN(SYSDATE,hiredate)) FROM emp;
+SELECT NEXT_DAY(SYSDATE,5) FROM dual;//获取距离当前时间最近的周4，若给定的当前时间恰巧是周4，则表示的是下周的周4.
+SELECT LEAST(SYSDATE, '10-10月-08') FROM DUAL;//返回10-10月-08
+SELECT GREATEST(SYSDATE, '10-10月-08') FROM DUAL;//返回sysdate当前系统时间
+SELECT EXTRACT(YEAR FROM SYSDATE) CURRENT_YEAR FROM DUAL;
+SELECT EXTRACT(HOUR FROM TIMESTAMP '2008-10-10 10:10:10') FROM DUAL;
+CREATE TABLE  student (id NUMBER(4), name CHAR(20), gender CHAR(1));
+INSERT INTO student VALUES(1000, '李莫愁','F');
+INSERT INTO student VALUES(1001, '林平之', NULL);
+INSERT INTO student(id, name) VALUES(1002, '张无忌');
+select * from student where gender is not null;
+select * from student where gender is null;
+null和任何数字运算结果还是null
+SELECT name, NVL(gender,'M') FROM student;
+NVL函数的作用：将null替换为给定的值
+SELECT ename,sal,NVL(comm,0) FROM emp;//有值就返回comm对应的值，值为null就返回0
+SELECT ename,sal+NVL(comm,0) FROM emp;//comm是奖金
+SELECT ename,NVL2(comm,sal+comm,sal) FROM emp;
+SELECT ename,NVL2(comm,'有奖金','没奖金') FROM emp;
 
 
 
