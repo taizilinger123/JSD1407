@@ -257,6 +257,18 @@ SELECT ename,sal,NVL(comm,0) FROM emp;//有值就返回comm对应的值，值为
 SELECT ename,sal+NVL(comm,0) FROM emp;//comm是奖金
 SELECT ename,NVL2(comm,sal+comm,sal) FROM emp;
 SELECT ename,NVL2(comm,'有奖金','没奖金') FROM emp;
+SELECT ENAME id FROM emp;  //id变大写
+SELECT ENAME "id" FROM emp; //"id"小写了
+SELECT ENAME "i d" FROM emp;//"i d"分开了
+SELECT TO_CHAR(hiredate,'yyyy-mm-dd') hiredate FROM emp; //给起了别名
+SELECT ename, sal, job FROM emp WHERE sal > 1000 AND job = 'CLERK' OR job = 'SALESMAN';//and的优先级高于or的,工资大于1000的clerk,job是salesman
+SELECT ename, sal, job FROM emp WHERE sal > 1300 AND (job = 'CLERK' OR job = 'SALESMAN');//job为clerk或者为salesman的并且工资大于1300
+SELECT ename,job FROM emp WHERE ename LIKE '_A%';//like字符串的模糊查询
+SELECT ename,sal,job FROM emp WHERE job IN ('MANAGER','SALESMAN','CLERK');//job=manager or job=salesman or job=clerk
+SELECT ename,sal,job FROM emp WHERE job NOT IN ('MANAGER','SALESMAN','CLERK');
+SELECT ename,sal FROM emp WHERE sal BETWEEN 1500 AND 3000;//between 小值  and 大值
+SELECT empno,ename,job,sal,deptno FROM emp WHERE sal > ANY (3500, 4000, 4500);//>ANY大于最小的，<ANY小于最大的，>ALL大于最大的，<ALL小于最小的
+
 
 
 
