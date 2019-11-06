@@ -268,7 +268,22 @@ SELECT ename,sal,job FROM emp WHERE job IN ('MANAGER','SALESMAN','CLERK');//job=
 SELECT ename,sal,job FROM emp WHERE job NOT IN ('MANAGER','SALESMAN','CLERK');
 SELECT ename,sal FROM emp WHERE sal BETWEEN 1500 AND 3000;//between 小值  and 大值
 SELECT empno,ename,job,sal,deptno FROM emp WHERE sal > ANY (3500, 4000, 4500);//>ANY大于最小的，<ANY小于最大的，>ALL大于最大的，<ALL小于最小的
-
+any和all与in的相同之处：都是给定一组数据进行比较
+区别：in是与给定的数据进行等值或不等值比较，all和any是与给定数据进行范围比较
+select ename,sal,job from emp where ename = UPPER('scott');//UPPER函数
+select ename,sal,job from emp where sal*12 > 10000;//表达式
+SELECT DISTINCT job FROM emp;//去掉重复job行,对单列去重，就一列的值没有重复的
+SELECT DISTINCT deptno, job  FROM emp;//对多列去重，可以达到的效果是，这几列的组合是不重复的
+SELECT ename, deptno  FROM emp ORDER BY deptno DESC;//order by只能出现在select语句最后,DESC是降序
+update emp set deptno=10 where ename='FORD';
+SELECT ename, deptno, sal  FROM emp ORDER BY sal,deptno;
+SELECT ename, deptno, sal  FROM emp ORDER BY sal DESC,deptno;//按照deptno升序排列，当deptno相同时候再按照sal的降序排序
+SELECT MAX(sal) max_sal,MIN(sal) min_sal from emp;
+SELECT MAX(hiredate) max_hire,MIN(hiredate) min_hire FROM emp;//min最早的入职，max最晚的入职
+SELECT AVG(sal),SUM(sal) FROM emp; 
+SELECT AVG(comm) FROM emp; 
+SELECT AVG(NVL(comm,0)) FROM emp; 
+SELECT COUNT(*) FROM emp WHERE deptno=20;
 
 
 
