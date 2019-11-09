@@ -284,10 +284,40 @@ SELECT AVG(sal),SUM(sal) FROM emp;
 SELECT AVG(comm) FROM emp; 
 SELECT AVG(NVL(comm,0)) FROM emp; 
 SELECT COUNT(*) FROM emp WHERE deptno=20;
-
-
-
-
+SELECT MAX(sal),MIN(sal),AVG(sal),SUM(sal),deptno FROM emp GROUP BY deptno;//查看每个部门中每种职位的工资情况
+//只要在select中使用了分组函数，那么，select中其他非分组函数的列若出现，那么也必须同时出现在group by子句中。反过来没有限制。
+//若group by中出现了多列，那么就按照这几列组合值相同的记录看做一组
+SELECT deptno,AVG(sal) FROM emp GROUP BY deptno HAVING AVG(sal)>1800;
+having用于在进行分组查询后，二次过滤数据的
+having不能独立存在，必须跟在group by之后。having中可以使用组函数的结果进行过滤
+与where的区别在于：
+where是用于第一次检索数据时过滤的。
+having是用于在检索后，进行二次过滤的
+select->from->where->group by->having->order by
+select deptno,dname from dept;
+select ename,deptno from emp;
+SELECT ename,dname FROM emp,dept;
+SELECT ename,dname FROM emp,dept Where emp.deptno = dept.deptno;
+SELECT ename,dname,e.deptno FROM emp e,dept d Where e.deptno = d.deptno;
+SELECT ename,dname,sal FROM emp e,dept d Where e.deptno = d.deptno AND sal>2500;
+SELECT e.ename,d.dname FROM emp e,dept d WHERE e.deptno=d.deptno AND d.dname='SALES';
+SELECT d.loc FROM emp e,dept d WHERE e.deptno = d.deptno AND e.ename='FORD';
+n张表联合查询，必须要有n-1个连接条件
+SELECT e.ename,d.dname FROM emp e,dept d WHERE e.deptno = d.deptno;//与下面的内连接等价
+SELECT e.ename,d.dname FROM emp e JOIN dept d ON(e.deptno=d.deptno);
+SELECT e.ename,d.dname FROM emp e NATURAL JOIN dept d;//自然连接会自动寻找两张表列名相同的做等值连接。注意，两张表中应当只有一列名字相同才可以使用自然连接。
+外连接的应用场景：
+当我们查看部门表时，因为在进行与emp连接查询时，40号部门不存在任何员工，导致查询结果该记录被忽略。这时若我们需要主要查看部门有哪些时，就使用外连接。
+SELECT * FROM dept;
+SELECT * FROM emp;
+SELECT d.dname,e.ename FROM emp e,dept d WHERE d.deptno=e.deptno;
+SELECT d.dname,e.ename FROM emp e RIGHT OUTER JOIN dept d ON(d.deptno=e.deptno);//右外连接
+UPDATE emp SET deptno=50 WHERE ename='FORD';
+SELECT d.dname,e.ename FROM emp e LEFT OUTER JOIN dept d ON(d.deptno=e.deptno);//左外连接
+SELECT d.dname,e.ename FROM emp e FULL OUTER JOIN dept d ON(d.deptno=e.deptno);//全外连接
+SELECT e.ename,m.ename  FROM emp e, emp m WHERE e.mgr=m.empno;//自连接
+SELECT e.ename||'的领导是'||m.ename  FROM emp e, emp m WHERE e.mgr=m.empno; 
+eg:SELECT s.name,f.name FROM menu s,menu f WHERE s.f_id=f.id;
 
 
  
