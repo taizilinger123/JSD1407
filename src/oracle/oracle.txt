@@ -318,6 +318,15 @@ SELECT d.dname,e.ename FROM emp e FULL OUTER JOIN dept d ON(d.deptno=e.deptno);/
 SELECT e.ename,m.ename  FROM emp e, emp m WHERE e.mgr=m.empno;//自连接
 SELECT e.ename||'的领导是'||m.ename  FROM emp e, emp m WHERE e.mgr=m.empno; 
 eg:SELECT s.name,f.name FROM menu s,menu f WHERE s.f_id=f.id;
+//作业
+SELECT ename,deptno FROM emp WHERE deptno IN(20,30);
+SELECT ename,job FROM emp WHERE mgr IS NULL ORDER BY job;
+SELECT ename,sal,comm FROM emp WHERE comm IS NOT NULL ORDER BY sal DESC;
+SELECT ename FROM emp WHERE ename LIKE '__A%';
+SELECT ename||','||job||','||sal AS "OUT_PUT" FROM emp;
+SELECT empno,ename,sal,sal*1.2 FROM emp;
+SELECT ename,sal FROM emp WHERE sal>1200 ORDER BY hiredate;
+SELECT deptno,dname,loc FROM dept WHERE dname <> 'ACCOUNT';
 
 
  
