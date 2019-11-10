@@ -327,7 +327,8 @@ SELECT ename||','||job||','||sal AS "OUT_PUT" FROM emp;
 SELECT empno,ename,sal,sal*1.2 FROM emp;
 SELECT ename,sal FROM emp WHERE sal>1200 ORDER BY hiredate;
 SELECT deptno,dname,loc FROM dept WHERE dname <> 'ACCOUNT';
-
+子查询
+当前查询需要建立在另一个查询的结果基础之上，这里就要利用到子查询.
 
  
 
