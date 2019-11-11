@@ -329,6 +329,7 @@ SELECT ename,sal FROM emp WHERE sal>1200 ORDER BY hiredate;
 SELECT deptno,dname,loc FROM dept WHERE dname <> 'ACCOUNT';
 子查询
 当前查询需要建立在另一个查询的结果基础之上，这里就要利用到子查询.
+单行单列和多行单列子查询通常用在where子查询中，多行多列子查询通常用在from当中
 
  
 
