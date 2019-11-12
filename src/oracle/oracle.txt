@@ -335,4 +335,10 @@ SELECT ename,sal,deptno FROM emp WHERE deptno = (SELECT deptno FROM emp WHERE en
 SELECT ename,sal,deptno FROM emp WHERE sal> (SELECT sal FROM emp WHERE ename = 'SCOTT');
 > < >= <= = <>这些比较都只能使用单行单列子查询
 SELECT ename,sal FROM emp WHERE sal<(SELECT AVG(sal) FROM emp); 
-
+SELECT ename,job,deptno FROM emp WHERE deptno IN(SELECT deptno FROM emp WHERE job='SALESMAN')  AND job <> 'SALESMAN';//多行单列子查询用in
+SELECT ename,sal FROM emp WHERE sal>ANY(SELECT sal FROM emp WHERE job='SALESMAN');
+SELECT deptno,dname FROM dept d WHERE EXISTS (SELECT * FROM emp e WHERE d.deptno=e.deptno);
+SELECT deptno,MIN(sal) FROM emp GROUP BY deptno HAVING MIN(sal)>(SELECT MIN(sal) FROM emp WHERE deptno=30);
+SELECT deptno,ename,sal FROM emp e1 WHERE e1.sal>(SELECT AVG(sal) FROM emp e2 WHERE e1.deptno = e2.deptno );
+SELECT ename,sal,deptno FROM emp e,(SELECT deptno, AVG(sal) avgsal FROM emp GROUP BY deptno) a WHERE e.deptno = a.deptno AND e.sal > a.avgsal;
+//在from子句中出现了子查询，那么意味着我们要将子查询的结果当做一张表去看待，从中再次查询想要的结果。那么就应当注意：子查询的SELECT语句中，出现了非字段名的字段（通常是表达式或者函数），那么一定要给他们加上别名。
