@@ -342,3 +342,38 @@ SELECT deptno,MIN(sal) FROM emp GROUP BY deptno HAVING MIN(sal)>(SELECT MIN(sal)
 SELECT deptno,ename,sal FROM emp e1 WHERE e1.sal>(SELECT AVG(sal) FROM emp e2 WHERE e1.deptno = e2.deptno );
 SELECT ename,sal,deptno FROM emp e,(SELECT deptno, AVG(sal) avgsal FROM emp GROUP BY deptno) a WHERE e.deptno = a.deptno AND e.sal > a.avgsal;
 //在from子句中出现了子查询，那么意味着我们要将子查询的结果当做一张表去看待，从中再次查询想要的结果。那么就应当注意：子查询的SELECT语句中，出现了非字段名的字段（通常是表达式或者函数），那么一定要给他们加上别名。
+SELECT ename,sal,(SELECT dname FROM dept d WHERE d.deptno = e.deptno) FROM emp e;
+SELECT ROWNUM,ename,sal FROM emp;//ROWNUM是当oracle进行select查询表数据时，确定一条数据需要时，才会对其进行编号(伪劣的值)，这就导致，没有数据被查出前，rownum永远
+没有值。所以rownum不能在第一次查询时作为where条件。
+rownum:有数据了才有值
+where里出现：有值才有数据
+所以这里有一个矛盾
+分页的三步：
+1：排序
+2：编号
+3：取范围
+分页：SELECT * FROM (SELECT ROWNUM rw,e.* FROM (SELECT empno,ename,sal FROM emp ORDER BY empno)e ) WHERE rw BETWEEN 1 AND 3;
+mysql:limit(1,3)
+分页的算法:page页数    pagesize一页的条数
+(page-1)*pagesize+1  start 
+page*pagesize        end 
+SELECT ename, job, sal, DECODE(job,
+                                     'MANAGER', sal * 1.2,
+                                     'ANALYST', sal * 1.1, 
+                                     'SALESMAN', sal * 1.05, 
+                                      sal)bonus 
+FROM emp;//decode和switch一样
+
+SELECT ename, job, sal,
+   CASE job WHEN 'MANAGER' THEN sal*1.2
+            WHEN 'ANALYST' THEN sal*1.1
+            WHEN 'SALESMAN' THEN sal*1.05
+            ELSE sal END
+   bonus 
+FROM emp;
+
+SELECT * FROM dept ORDER BY DECODE(dname,
+                                      'OPERATIONS',0,
+                                       'ACCOUNTING',1,
+                                       'SALES',2,
+                                       3);
