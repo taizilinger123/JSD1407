@@ -377,3 +377,32 @@ SELECT * FROM dept ORDER BY DECODE(dname,
                                        'ACCOUNTING',1,
                                        'SALES',2,
                                        3);
+//20号部门一组，其他部门是另一组
+思路：将其他不同部门的值改成相同的值即可                                       
+SELECT SUM(sal),DECODE(deptno,20,'20','other') deptno FROM emp GROUP BY DECODE(deptno,20,'20','other');
+SELECT ename,sal,deptno,ROW_NUMBER() OVER(PARTITION BY deptno ORDER BY sal DESC) rank  FROM emp;//组内排名,根据deptno分组，再根据sal排序
+row_number():生成组内连续且唯一的编号
+SELECT ename,sal,deptno,RANK() OVER(PARTITION BY deptno ORDER BY sal DESC) rank  FROM emp;
+//rank():生成组内不连续且不唯一的编号,排序的列若值相同，会得到相同的编号
+SELECT ename,sal,deptno,DENSE_RANK() OVER(PARTITION BY deptno ORDER BY sal DESC) rank  FROM emp;
+//dense_rank():生成组内连续但不唯一的编号
+SELECT ename,job,sal FROM emp WHERE job='MANAGER' UNION SELECT ename,job,sal FROM emp WHERE sal>2500;//或
+SELECT ename,job,sal FROM emp WHERE job='MANAGER' UNION ALL SELECT ename,job,sal FROM emp WHERE sal>2500;//或
+SELECT ename,job,sal FROM emp WHERE job='MANAGER' INTERSECT SELECT ename,job,sal FROM emp WHERE sal>2500;//and且
+SELECT ename,job,sal FROM emp WHERE job='MANAGER' MINUS  SELECT ename,job,sal FROM emp WHERE sal>2500;//job是manager并且sal小于2500,我有你没有的
+CREATE TABLE sales_tab(
+     year_id NUMBER NOT NULL,
+    month_id NUMBER NOT NULL,
+    day_id NUMBER NOT NULL,
+    sales_value NUMBER(10,2) NOT NULL
+);
+INSERT INTO sales_tab 
+SELECT TRUNC(DBMS_RANDOM.value(2010,2012)) AS year_id,
+       TRUNC(DBMS_RANDOM.value(1,13)) AS month_id,
+       TRUNC(DBMS_RANDOM.value(1,32)) AS day_id,
+       ROUND(DBMS_RANDOM.value(1,100),2) AS sales_value  
+FROM dual 
+CONNECT BY level <=1000;
+COMMIT;
+
+select * from sales_tab;
