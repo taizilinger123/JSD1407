@@ -420,5 +420,10 @@ GROUP BY CUBE(y,m,d)//ymd,ym,yd,md,y,m,d,整体一次,2的3次方
 SELECT 学校， 年级， 班级， COUNT(*) FROM 在校学生信息   GROUP BY ROLLUP(学校，年级， 班级)
 SELECT year_id,month_id,day_id,SUM(sales_value) FROM sales_tab GROUP BY CUBE(year_id,month_id,day_id) ORDER BY year_id,month_id,day_id;
 SELECT year_id,month_id,day_id,SUM(sales_value) FROM sales_tab GROUP BY GROUPING SETS((year_id,month_id,day_id),(year_id,month_id)) ORDER BY year_id,month_id,day_id;
-
+CREATE VIEW v_emp_10  
+AS 
+SELECT empno,ename,sal,deptno
+FROM emp
+WHERE deptno = 10;
+DESC  v_emp_10;
 
