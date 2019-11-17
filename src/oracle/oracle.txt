@@ -406,3 +406,19 @@ CONNECT BY level <=1000;
 COMMIT;
 
 select * from sales_tab;
+select * from sales_tab ORDER BY year_id,month_id,day_id;
+SELECT SUM(sales_value) FROM sales_tab GROUP BY year_id,month_id,day_id  
+UNION ALL SELECT SUM(sales_value) FROM sales_tab GROUP BY year_id,month_id
+UNION ALL SELECT SUM(sales_value) FROM sales_tab GROUP BY year_id 
+UNION ALL SELECT SUM(sales_value) FROM sales_tab;
+等同于下面的rollup语句
+SELECT year_id,month_id,day_id,SUM(sales_value) FROM sales_tab GROUP BY ROLLUP(year_id,month_id,day_id) ORDER BY year_id,month_id,day_id;
+GROUP BY ROLLUP(a,b,c)//abc ab a 整体
+GROUP BY CUBE(y,m,d)//ymd,ym,yd,md,y,m,d,整体一次,2的3次方
+北京市在校学生信息
+学校  年级   班级    学生名
+SELECT 学校， 年级， 班级， COUNT(*) FROM 在校学生信息   GROUP BY ROLLUP(学校，年级， 班级)
+SELECT year_id,month_id,day_id,SUM(sales_value) FROM sales_tab GROUP BY CUBE(year_id,month_id,day_id) ORDER BY year_id,month_id,day_id;
+SELECT year_id,month_id,day_id,SUM(sales_value) FROM sales_tab GROUP BY GROUPING SETS((year_id,month_id,day_id),(year_id,month_id)) ORDER BY year_id,month_id,day_id;
+
+
