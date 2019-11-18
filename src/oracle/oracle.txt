@@ -426,4 +426,21 @@ SELECT empno,ename,sal,deptno
 FROM emp
 WHERE deptno = 10;
 DESC  v_emp_10;
+CREATE OR REPLACE VIEW v_emp_10 AS SELECT empno id,ename name, sal salary, deptno deptno FROM emp WHERE deptno = 10;//修改同名视图sql语句
+SELECT * FROM  v_emp_10;//查询视图
+SELECT name,salary  FROM  v_emp_10;//只能用别名去查
+尽量避免使用DML操作视图,几乎不成功
+CREATE OR REPLACE VIEW v_emp_10 AS SELECT empno id,ename name, sal salary, deptno deptno FROM emp WHERE deptno = 10 WITH CHECK OPTION;//加 WITH CHECK OPTION就不能随便修改视图了
+/*
+INSERT INTO v_emp_10 VALUES(1008,'donna',5500,20);
+UPDATE v_emp_10 SET deptno = 20 WHERE id = 7782;
+INSERT INTO v_emp_10 VALUES(1008,'donna',5500,20)
+错误报告:
+SQL 错误: ORA-01402: 视图 WITH CHECK OPTION where 子句违规
+01402. 00000 -  "view WITH CHECK OPTION where-clause violation"
+*Cause:    
+*Action:
+*/
+CREATE OR REPLACE VIEW v_emp_10 AS SELECT empno id,ename name, sal salary, deptno deptno FROM emp WHERE deptno = 10 WITH READ ONLY;//把视图改成只读,不能随便修改
+
 
