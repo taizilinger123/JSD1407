@@ -452,4 +452,41 @@ SELECT *  FROM v_emp_salary;
 DROP VIEW v_emp_10;//删除视图
 序列：生成一组不重复的数字的,生成主键
 SELECT sys_guid() FROM DUAL//生成uuid 
-
+CREATE SEQUENCE emp_seq START WITH 100 INCREMENT BY 10;
+SELECT emp_seq.NEXTVAL FROM DUAL;//ID会长
+SELECT emp_seq.CURRVAL FROM DUAL;//ID不会长了
+INSERT INTO emp (empno,ename,sal,deptno) VALUES(emp_seq.NEXTVAL,'JACK',5000,30);
+select * from emp;
+delete from emp where empno=140;
+DROP SEQUENCE emp_seq;
+索引指定的列是经常在where子句中经常出现的列
+CREATE INDEX idx_emp_ename ON emp(ename);
+CREATE INDEX idx_emp_job_sal ON emp(job, sal);
+CREATE INDEX emp_ename_upper_idx ON emp(UPPER(ename));
+重建索引:
+ALTER INDEX idx_emp_ename REBUILD;
+DROP INDEX idx_emp_ename;
+列级约束：
+在创建表指定列的同时声明的约束。
+CREATE TABLE employees(
+eid NUMBER(6),
+name VARCHAR2(30) NOT NULL,
+salary NUMBER(7,2),
+hiredate DATE 
+      CONSTRAINT 
+      employees_hiredate_nn NOT NULL
+);
+not null只能是列级约束
+ALTER TABLE employees MODIFY(eid NUMBER(6) NOT NULL);//添加非空约束
+ALTER TABLE employees MODIFY(eid NUMBER(6) NULL);//去掉非空约束
+desc employees;//可以查非空约束
+DROP TABLE employees;
+CREATE TABLE employees(
+    eid NUMBER(6) UNIQUE,
+    name VARCHAR2(30),
+    email VARCHAR2(50),
+    salary NUMBER(7,2),
+    hiredate DATE,
+    CONSTRAINT employees_email_uk UNIQUE(email)
+);
+INSERT INTO employees VALUES(1000,'boss','boss@qq.com',5000,sysdate);
