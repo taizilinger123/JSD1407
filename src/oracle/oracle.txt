@@ -527,3 +527,4 @@ FOREIGN KEY(deptno) REFERENCES  dept(deptno)
 );
 ALTER TABLE employees4 ADD CONSTRAINT employees4_salary_check CHECK(salary>2000);//检查约束
 ALTER TABLE employees4 DROP CONSTRAINT employees4_salary_check;//删除约束
+SELECT constraint_name,constraint_type,search_condition FROM user_constraints WHERE table_name = 'EMPLOYEES4';//查看约束的数据字典

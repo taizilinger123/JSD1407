@@ -1,0 +1,9 @@
+JDBC工作过程：
+加载驱动，建立连接(加载驱动是靠drivermanager,并且通过drivermanager获取连接connection)
+创建语句对象(通过connection创建对象statement用于执行sql语句)
+执行SQL语句
+处理结果集(若执行的是select语句会产生结果集resultset)
+关闭连接(就是调用connection.close()方法)
+驱动类加载方式(Oracle):
+class.forName("oracle.jdbc.driver.OracleDriver");
+class.forName("com.mysql.jdbc.Driver");
