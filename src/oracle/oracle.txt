@@ -489,4 +489,41 @@ CREATE TABLE employees(
     hiredate DATE,
     CONSTRAINT employees_email_uk UNIQUE(email)
 );
-INSERT INTO employees VALUES(1000,'boss','boss@qq.com',5000,sysdate);
+INSERT INTO employees VALUES(1000,'boss','boss@qq.com',5000,sysdate);//违反唯一性约束报错
+ALTER TABLE employees ADD CONSTRAINT employees_name_uk UNIQUE(name);
+一张表上只允许有一个字段加上主键约束
+CREATE TABLE employees2(
+eid NUMBER(6) PRIMARY KEY,
+name VARCHAR2(30),
+email VARCHAR2(50),
+salary NUMBER(7,2),
+hiredate DATE
+);
+CREATE TABLE employees3(
+eid NUMBER(6),
+name VARCHAR2(30),
+email VARCHAR2(50),
+salary NUMBER(7,2),
+hiredate DATE
+);
+ALTER TABLE employees3  ADD CONSTRAINT employees3_eid_pk PRIMARY KEY (eid);
+CREATE TABLE employees4(
+eid NUMBER(6),
+name VARCHAR2(30),
+salary NUMBER(7,2),
+deptno NUMBER(4)
+);
+
+ALTER TABLE dept ADD CONSTRAINT dept_deptno_pk PRIMARY KEY (deptno);
+ALTER TABLE employees4 ADD CONSTRAINT employees4_deptno_fk FOREIGN KEY(deptno) REFERENCES  dept(deptno);
+//相当于下面一句话
+CREATE TABLE employees4(
+eid NUMBER(6),
+name VARCHAR2(30),
+salary NUMBER(7,2),
+deptno NUMBER(4),
+CONSTRAINT employees4_deptno_fk 
+FOREIGN KEY(deptno) REFERENCES  dept(deptno)
+);
+ALTER TABLE employees4 ADD CONSTRAINT employees4_salary_check CHECK(salary>2000);//检查约束
+ALTER TABLE employees4 DROP CONSTRAINT employees4_salary_check;//删除约束
