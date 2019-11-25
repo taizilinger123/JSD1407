@@ -28,6 +28,8 @@ public class JDBCDemo3 {
         	int deptno = rs.getInt("deptno");
         	System.out.println(empno+","+ename+","+sal+","+deptno);
 		}
+		//使用后关闭连接
+		DBUtil.closeConnection(conn);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}
