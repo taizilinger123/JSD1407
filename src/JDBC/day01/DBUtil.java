@@ -27,6 +27,7 @@ public class DBUtil {
 		  */
 		 InputStream is = DBUtil.class.getClassLoader().getResourceAsStream("JDBC/day01/config.properties");
 		 prop.load(is);
+		 is.close();
 		 //获取驱动
          String driver = prop.getProperty("driver");
          //获取地址
