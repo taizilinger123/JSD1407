@@ -1,9 +1,6 @@
 package JDBC.day01;
 
 import java.sql.Statement;
-
-import oracle.net.aso.r;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -50,15 +47,21 @@ public class JDBCDemo {
 		 * 查询emp表中的信息
 		 * SELECT empno,ename,sal,deptno FROM emp;
 		 */
-		String sql = "SELECT empno,ename,sal,deptno FROM emp";
+		String sql = "SELECT empno,ename,sal,deptno "+ "FROM emp";
 		
 		//输出sql,用于检查拼写是否有错误
-		//System.out.println(sql);
+		System.out.println(sql);
 		/*
 		 * 使用executeQuery来执行DQL语句
 		 * 并且查询后会得到一个查询结果集
 		 */
 		ResultSet rs = state.executeQuery(sql);
+		/*
+		 * 需要注意的是,Resultset表示的是查询结果集，但实际上查询的结果集
+		 * 在ORACLE数据库服务器上，并没有全部保存在本地，所以，我们通过Resultset
+		 * 的next方法获取下一条记录时，Resultset会发送请求至服务端获取数据，若连接已经
+		 * 关闭，那么会抛出异常。
+		 */
         while(rs.next()){
         	int empno = rs.getInt("empno");
         	String ename = rs.getString("ename");
