@@ -16,7 +16,8 @@ public class JDBCDemo3 {
 		Thread t = Thread.currentThread();
 		System.out.println("执行main方法的线程是:"+t);
 		
-		Connection conn = DBUtil.getConnection();
+		//Connection conn = DBUtil.getConnection();
+		Connection conn = DBUtil2.getConnection();
 		System.out.println("数据库已连接");
 		
 		Statement state = conn.createStatement();
