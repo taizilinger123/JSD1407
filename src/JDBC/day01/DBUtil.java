@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
-
 /**
  * 使用配置文件来配置JDBC连接数据库该类用来管理数据库的连接
  * @author sige
@@ -17,6 +16,9 @@ public class DBUtil {
   private static String user;
   //连接数据库的密码
   private static String pwd;
+  //用于管理不同线程所获取的连接
+  private static ThreadLocal<Connection> tl = new ThreadLocal<Connection>();
+  //private static Map<Thread, Connection> map = new HashMap<Thread, Connection>();
   //静态块
   static{
 	  try{
@@ -55,7 +57,13 @@ public class DBUtil {
 		/*
 		 * 通过DriverManager创建一个数据库的连接并返回
 		 */
-		return DriverManager.getConnection(url,user,pwd);
+		Connection conn =  DriverManager.getConnection(url,user,pwd);
+		/*
+		 * ThreadLocal的set方法
+		 * 会将当前线程作为key,并将给定的值作为value存入内部的map中保存。
+		 */
+		tl.set(conn);
+		return conn;
 	} catch (Exception e) {
 		e.printStackTrace();
 		//通知调用者，创建连接出错
@@ -65,15 +73,16 @@ public class DBUtil {
   
   /**
    * 关闭给定的连接
-   * @param conn
    */
-  public static void closeConnection(Connection conn){
+  public static void closeConnection(){
 	  try {
-		if(conn != null){
-            conn.close();			
-		}
+			Connection conn = tl.get();
+			if(conn != null){
+	            conn.close();
+	            tl.remove();
+			}
 	} catch (Exception e) {
-		e.printStackTrace();
+		    e.printStackTrace();
 	}
   }
 }
