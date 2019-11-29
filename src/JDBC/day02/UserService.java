@@ -2,6 +2,7 @@ package JDBC.day02;
 
 import java.sql.Statement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;
 import JDBC.day01.DBUtil2;
@@ -65,14 +66,20 @@ public class UserService {
 	  
 	  try {
 		Connection conn = DBUtil2.getConnection();
-		Statement  state = conn.createStatement();
-		String sql = "SELECT * " +
-		             "FROM user_sige " +
-				     "WHERE " +
-				     "name='"+user+"' " +
-				     "AND " +
-				     "password='"+pwd+"'";
-	   ResultSet rs = state.executeQuery(sql);
+		String sql = "SELECT * FROM user_sige " +
+				     "WHERE name=? AND password=?";//防止sql注入的方式
+		PreparedStatement ps = conn.prepareStatement(sql);//防止sql注入的方式
+//		Statement  state = conn.createStatement();
+//		String sql = "SELECT * " +
+//		             "FROM user_sige " +
+//				     "WHERE " +
+//				     "name='"+user+"' " +
+//				     "AND " +
+//				     "password='"+pwd+"'";
+//	   ResultSet rs = state.executeQuery(sql);
+	   ps.setString(1, user);
+	   ps.setString(2, pwd);
+	   ResultSet rs = ps.executeQuery();
 	   //根据用户输入的能否查到数据
 	   if(rs.next()){
 		   System.out.println("登陆成功!");
