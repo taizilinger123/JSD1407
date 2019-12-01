@@ -72,6 +72,8 @@ public class DBUtil2 {
 	  try{
 		  Connection conn = tl.get();
 		  if(conn != null){
+			  //恢复连接为自动提交事务
+			  conn.setAutoCommit(true);
 			  /*
 			   * 通过连接池获取的Connection的close()方法实际上并没有将连接关闭，而是将该连接归还。
 			   */

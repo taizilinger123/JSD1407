@@ -1,0 +1,23 @@
+所谓事务：每执行一条DML操作，就会提交事务
+select * from user_sige order by id;
+delete from user_sige where id>10;
+批处理用于执行DML操作，就是增删改操作
+CREATE sequence user_seq_sige START WITH 1000;
+ALTER TABLE user_sige ADD(deptno NUMBER(2))
+desc dept;
+select * from dept
+desc user_sige;
+desc dept_seq_sige;
+CREATE SEQUENCE dept_seq_sige START WITH 60;
+INSERT INTO dept VALUES(dept_seq_sige.NEXTVAL,'IT','BEIJING');
+SELECT MAX(deptno) FROM dept;
+INSERT INTO user_sige VALUES(user_seq_sige.NEXTVAL,'BOSS','123456',5000,'boss.qq.com',60);
+select * from dept;
+select * from user_sige;
+
+SELECT * FROM emp ORDER BY empno;
+SELECT * FROM dept ORDER BY deptno;
+
+select * from t limit begin,pageSize;
+DAO层的作用就是操作数据库面向对象化了,DAO是数据持久层
+select *  from user_sige;
