@@ -52,3 +52,11 @@
             <!--页面上要呈现的内容-->
           </body>
        </html>
+3.如何解决乱码问题
+  1)创建HTML时，需要将文件编码设置为utf-8
+  2)需要在<head>元素下，使用<meta>元素设置页面内容的编码;
+有序列表<ol>order list 
+无序列表<ul>unorder list
+myeclipse-Window-Preferences-搜索框输入html-HTML-HTML Source-Indent using spaces,Indentation size 2
+右键文件demo2.html-Properties-Text file encoding-other(UTF-8)
+  
