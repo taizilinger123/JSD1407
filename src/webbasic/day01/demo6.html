@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+     <title>表格</title>
+     <meta charset="utf-8"/>
+  </head>
+  <body>
+     <!--创建一个表格，2行2列-->
+     <table border="1px" width="100px">
+       <!-- 第1行 -->
+       <tr>
+          <!--第1列 -->
+          <td>aaa</td>
+          <!--第2列 -->
+          <td>bbb</td>
+       </tr>
+       <!-- 第2行 -->
+       <tr>
+          <!--第1列 -->
+          <td>ccc</td>
+          <!--第2列 -->
+          <td>ddd</td>
+       </tr>
+     </table>
+      
+     <!-- 第2个table,演示跨行-->
+      <table border="1px" width="100px">
+       <!-- 第1行 -->
+       <tr>
+          <!--第1列 -->
+          <td rowspan="2">aaa</td>
+          <!--第2列 -->
+          <td>bbb</td>
+       </tr>
+       <!-- 第2行 -->
+       <tr>
+          <!--第1列 -->
+          <!--由于aaa要跨行，占据ccc的位置，所以需要先将ccc删除，释放这个位置。-->
+          <!-- <td>ccc</td> -->
+          <!--第2列 -->
+          <td>ddd</td>
+       </tr>
+     </table>
+     
+      <!--第3个table,演示跨列-->
+      <table border="1px" width="100px">
+       <!-- 第1行 -->
+       <tr>
+          <!--第1列 -->
+          <td colspan="2">aaa</td>
+          <!--第2列 -->
+          <!--由于aaa要跨列，占据bbb的位置，所以先把bbb删除，释放其位置。-->
+          <!--<td>bbb</td>-->
+       </tr>
+       <!-- 第2行 -->
+       <tr>
+          <!--第1列 -->
+          <td>ccc</td>
+          <!--第2列 -->
+          <td>ddd</td>
+       </tr>
+     </table>
+  </body>
+</html>

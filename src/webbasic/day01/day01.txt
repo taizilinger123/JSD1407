@@ -63,4 +63,5 @@ myeclipse-Window-Preferences-搜索框输入html-HTML-HTML Source-Indent using s
 直接粘贴复制demo.html就像一个模板一样就复制出来了demo3.html
 块级元素：1.独立成行，默认垂直布局;2.占据一个矩形区域; 3.<hn>,<p>,<ol>,<ul>,<div>;4.块级元素会影响页面的布局
 行内元素：1.不独立成行，可以横向布局 ;2.不会占据矩形区域，它只是用来修饰段落中的某几个字的;3.<span>,<i>,<u>...;4行内元素不会影响页面布局;
+默认情况下，表格的边线看不见；可以给table统一设置边线，设置后，可以看见table和td的边线。 
   
