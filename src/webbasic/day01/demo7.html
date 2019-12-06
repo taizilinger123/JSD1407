@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+     <title>表单</title>
+     <meta charset="utf-8"/>
+  </head>
+  <body>
+     <!--form是表单，内部可以包含多个控件，控件内可以输入值。我们是以表单为单元进行提交的，一次要提交一个表单所包含的所有控件的值。
+                           表单只是用来圈定提交的范围，它是透明不可见的。-->
+     <form action="#">
+         <!-- 文本框 -->
+        <p>
+         <!--是表单中的文本，通过for属性可以绑定到input元素上，使得点击此label时，相当于点击了对应的input。id是元素的身份证号，用来引用该元素。-->
+         <label for="user_name">账号:</label>
+         <input type="text" id="user_name"/>
+        </p>
+     </form>
+  </body>
+</html>
